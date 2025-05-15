@@ -1,0 +1,1 @@
+Escuchan y reaccionan a eventos emitidos por entidades/agregados

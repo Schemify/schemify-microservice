@@ -19,7 +19,10 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@app/proto": ["libs/proto/generated"],
-      "@app/proto/*": ["libs/proto/generated/*"]
+      "@app/proto/*": ["libs/proto/generated/*"],
+      "@microservice/schemify-microservice/*": [
+        "apps/schemify-microservice/src/*"
+      ]
     },
     "resolveJsonModule": true,
     "esModuleInterop": true

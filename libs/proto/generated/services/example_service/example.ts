@@ -2,7 +2,7 @@
 // versions:
 //   protoc-gen-ts_proto  v2.7.0
 //   protoc               v3.20.3
-// source: libs/proto/src/services/example_service/example.proto
+// source: example.proto
 
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices'
@@ -10,39 +10,63 @@ import { Observable } from 'rxjs'
 
 export const protobufPackage = 'example'
 
-/** Mensaje vacío utilizado para las peticiones que no requieren datos adicionales. */
-export interface Empty {}
+/** ! Mensaje vacío (común en operaciones sin payload) */
+export interface ExampleEmpty {}
 
-/** Mensaje utilizado para crear un nuevo ejemplo. */
+/** Crear nuevo ejemplo */
 export interface CreateExampleDto {
   name: string
   description?: string | undefined
 }
 
-/** Mensaje utilizado para actualizar un ejemplo existente. */
+/** Actualizar un ejemplo */
 export interface UpdateExampleDto {
   id: string
   example: UpdateExampleData | undefined
 }
 
-/** Mensaje utilizado para obtener un ejemplo por su ID. */
+/** Obtener un ejemplo por su ID */
 export interface GetExampleByIdDto {
   id: string
 }
 
-/** Mensaje utilizado para devolver un ejemplo. */
+/** Solicitud de paginación por cursor (scroll infinito) */
+export interface CursorPaginationRequest {
+  /** ID del último elemento visto */
+  afterId: string
+  /** Elementos siguientes a devolver */
+  limit: number
+}
+
+/** Lista de múltiples ejemplos (no paginada) */
 export interface Examples {
   examples: Example[]
 }
 
-/** Mensaje que representa un ejemplo en la aplicación. */
+/** Lista de ejemplos paginada con `page`/`limit` */
+export interface PaginatedExamples {
+  examples: Example[]
+  total: number
+  page: number
+  limit: number
+}
+
+/** Lista de ejemplos paginada con `cursor` */
+export interface CursorPaginatedExamples {
+  examples: Example[]
+  nextCursor: string
+  hasMore: boolean
+}
+
+/** Representación base de un ejemplo */
 export interface Example {
-  /** Identificador único del ejemplo. */
+  /** ! ID único del ejemplo */
   id: string
   name: string
   description?: string | undefined
 }
 
+/** Datos anidados para actualizar un ejemplo */
 export interface UpdateExampleData {
   name: string
   description?: string | undefined
@@ -51,47 +75,90 @@ export interface UpdateExampleData {
 export const EXAMPLE_PACKAGE_NAME = 'example'
 
 /**
+ * ================================
+ *   📦 Servicio ExampleService
+ * ================================
+ *
  * Contratos de comunicación entre el cliente y el servidor
  * para la gestión de ejemplos en la aplicación.
  */
 
 export interface ExampleServiceClient {
+  /** Crear un nuevo ejemplo */
+
   createExample(request: CreateExampleDto): Observable<Example>
 
-  getAllExamples(request: Empty): Observable<Examples>
+  /** Obtener todos los ejemplos (no paginado) */
+
+  getAllExamples(request: ExampleEmpty): Observable<Examples>
+
+  /** Obtener un ejemplo por ID */
 
   getExampleById(request: GetExampleByIdDto): Observable<Example>
 
+  /** Actualizar un ejemplo existente */
+
   updateExample(request: UpdateExampleDto): Observable<Example>
 
-  deleteExample(request: GetExampleByIdDto): Observable<Empty>
+  /** Eliminar un ejemplo por ID */
+
+  deleteExample(request: GetExampleByIdDto): Observable<ExampleEmpty>
+
+  /** Soporte para scroll infinito (cursor-based pagination) */
+
+  getExamplesByCursor(
+    request: CursorPaginationRequest
+  ): Observable<CursorPaginatedExamples>
 }
 
 /**
+ * ================================
+ *   📦 Servicio ExampleService
+ * ================================
+ *
  * Contratos de comunicación entre el cliente y el servidor
  * para la gestión de ejemplos en la aplicación.
  */
 
 export interface ExampleServiceController {
+  /** Crear un nuevo ejemplo */
+
   createExample(
     request: CreateExampleDto
   ): Promise<Example> | Observable<Example> | Example
 
+  /** Obtener todos los ejemplos (no paginado) */
+
   getAllExamples(
-    request: Empty
+    request: ExampleEmpty
   ): Promise<Examples> | Observable<Examples> | Examples
+
+  /** Obtener un ejemplo por ID */
 
   getExampleById(
     request: GetExampleByIdDto
   ): Promise<Example> | Observable<Example> | Example
 
+  /** Actualizar un ejemplo existente */
+
   updateExample(
     request: UpdateExampleDto
   ): Promise<Example> | Observable<Example> | Example
 
+  /** Eliminar un ejemplo por ID */
+
   deleteExample(
     request: GetExampleByIdDto
-  ): Promise<Empty> | Observable<Empty> | Empty
+  ): Promise<ExampleEmpty> | Observable<ExampleEmpty> | ExampleEmpty
+
+  /** Soporte para scroll infinito (cursor-based pagination) */
+
+  getExamplesByCursor(
+    request: CursorPaginationRequest
+  ):
+    | Promise<CursorPaginatedExamples>
+    | Observable<CursorPaginatedExamples>
+    | CursorPaginatedExamples
 }
 
 export function ExampleServiceControllerMethods() {
@@ -101,7 +168,8 @@ export function ExampleServiceControllerMethods() {
       'getAllExamples',
       'getExampleById',
       'updateExample',
-      'deleteExample'
+      'deleteExample',
+      'getExamplesByCursor'
     ]
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(

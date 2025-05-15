@@ -82,6 +82,8 @@ message ${CLASS_NAME}s {
 }
 EOF
 
+mkdir -p "$PROJECT_ROOT/libs/proto/generated/services/$NAME"
+
 npx protoc \
   --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd \
   --ts_proto_out=${DEST}/generated \
@@ -95,30 +97,39 @@ SERVICES_INDEX="$DEST/generated/services/index.ts"
 SERVICE_FOLDER="$DEST/generated/services/$SNAKE_NAME"
 SERVICE_INDEX="$SERVICE_FOLDER/index.ts"
 
-SERVICE_EXPORT_LINE="export * from './$SNAKE_NAME';"
+# * libs/proto/src/services/$NAME/$INSTANCE_NAME.proto
+cat <<EOF > $DEST/generated/services/$INSTANCE_NAME/index.ts
+export * from "./${SNAKE_NAME}"
+EOF
 
-# 1. ROOT: export * from './services';
-mkdir -p "$(dirname "$ROOT_INDEX")"
-touch "$ROOT_INDEX"
-grep -Fxq "export  from './services'" "$ROOT_INDEX" || echo "export * from './services'" >> "$ROOT_INDEX"
+texto="export * from './${INSTANCE_NAME}'"
+archivo="$DEST/generated/services/index.ts"
 
-# 2. SERVICES: export * from './usuarios_gestor';
-mkdir -p "$(dirname "$SERVICES_INDEX")"
-touch "$SERVICES_INDEX"
-grep -Fxq "$SERVICE_EXPORT_LINE" "$SERVICES_INDEX" || echo "$SERVICE_EXPORT_LINE" >> "$SERVICES_INDEX"
+grep -qxF "$texto" "$archivo" || echo "$texto" >> "$archivo"
 
-# 3. SERVICIO: export con alias para evitar colisiones
-mkdir -p "$SERVICE_FOLDER"
-touch "$SERVICE_INDEX"
 
-# Solo añade si no está presente
-if ! grep -q "export {" "$SERVICE_INDEX"; then
-  echo "export {" >> "$SERVICE_INDEX"
-  echo "  Empty as ${CLASS_NAME}Empty," >> "$SERVICE_INDEX"
-  echo "  protobufPackage as ${CLASS_NAME}Package," >> "$SERVICE_INDEX"
-  echo "  ${CLASS_NAME}ServiceClient," >> "$SERVICE_INDEX"
-  echo "  ${CLASS_NAME}ServiceController," >> "$SERVICE_INDEX"
-  echo "  ${CLASS_NAME}ServiceControllerMethods," >> "$SERVICE_INDEX"
-  echo "  ${CLASS_NAME}_SERVICE_NAME," >> "$SERVICE_INDEX"
-  echo "} from './$SNAKE_NAME';" >> "$SERVICE_INDEX"
-fi
+# # 1. ROOT: export * from './services';
+# mkdir -p "$(dirname "$ROOT_INDEX")"
+# touch "$ROOT_INDEX"
+# grep -Fxq "export  from './services'" "$ROOT_INDEX" || echo "export * from './services'" >> "$ROOT_INDEX"
+
+# # 2. SERVICES: export * from './usuarios_gestor';
+# mkdir -p "$(dirname "$SERVICES_INDEX")"
+# touch "$SERVICES_INDEX"
+# grep -Fxq "$SERVICE_EXPORT_LINE" "$SERVICES_INDEX" || echo "$SERVICE_EXPORT_LINE" >> "$SERVICES_INDEX"
+
+# # 3. SERVICIO: export con alias para evitar colisiones
+# mkdir -p "$SERVICE_FOLDER"
+# touch "$SERVICE_INDEX"
+
+# # Solo añade si no está presente
+# if ! grep -q "export {" "$SERVICE_INDEX"; then
+#   echo "export {" >> "$SERVICE_INDEX"
+#   echo "  Empty as ${CLASS_NAME}Empty," >> "$SERVICE_INDEX"
+#   echo "  protobufPackage as ${CLASS_NAME}Package," >> "$SERVICE_INDEX"
+#   echo "  ${CLASS_NAME}ServiceClient," >> "$SERVICE_INDEX"
+#   echo "  ${CLASS_NAME}ServiceController," >> "$SERVICE_INDEX"
+#   echo "  ${CLASS_NAME}ServiceControllerMethods," >> "$SERVICE_INDEX"
+#   echo "  ${CLASS_NAME}_SERVICE_NAME," >> "$SERVICE_INDEX"
+#   echo "} from './$SNAKE_NAME';" >> "$SERVICE_INDEX"
+# fi

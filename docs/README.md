@@ -62,11 +62,11 @@ Mover archivo resultante a libs/common/src/types
 
 🔒 Logger centralizado (por ejemplo con Pino) y redirección de logs Kafka a archivos o servicios externos.
 
-$ docker tag schemify-nestjs-schemify-microservice ixyz0/schemify-microservice-nestjs:v0.1.0
+$ docker tag schemify-nestjs-schemify-microservice ixyz0/schemify-microservice:v0.1.0
 
-docker push ixyz0/schemify-microservice-nestjs:v0.1.0
+docker push ixyz0/schemify-microservice:v0.1.0
 
-https://hub.docker.com/repository/docker/ixyz0/schemify-microservice-nestjs/general
+https://hub.docker.com/repository/docker/ixyz0/schemify-microservice/general
 
 
 helm create postgres-chart

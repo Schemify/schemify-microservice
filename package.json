@@ -19,7 +19,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./jest.config.ts",
-    "test:e2e:schemify": "jest --selectProjects schemify-microservice-nestjs",
+    "test:e2e:schemify": "jest --selectProjects schemify-microservice",
     "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then husky install; fi"
   },
   "dependencies": {
@@ -28,6 +28,7 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/cqrs": "^11.0.3",
     "@nestjs/mapped-types": "*",
     "@nestjs/microservices": "^11.0.16",
     "@nestjs/platform-express": "^11.0.1",

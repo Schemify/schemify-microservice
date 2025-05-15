@@ -1,0 +1,1 @@
+Representan cosas que ocurrieron dentro del dominio

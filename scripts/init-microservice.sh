@@ -22,7 +22,7 @@ CAMEL_CASE_NAME=$(echo "$RAW_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-
 # 🐍 Instancia: gestioonDeUsuarios
 
 PROJECT_ROOT=$(realpath "$(dirname "$0")/..")
-DEST="$PROJECT_ROOT/apps/$NAME"
+DEST="$PROJECT_ROOT/apps/$NAME-microservice"
 
 echo "📦 Generando microservicio: $NAME"
 echo "📂 Directorio destino: $DEST"
@@ -30,7 +30,7 @@ echo "🏛️  Clase base: $CLASS_NAME"
 echo "🐍 Instancia: $INSTANCE_NAME"
 
 # ─── Crear carpetas base ─────────────────────────────────────────────
-mkdir -p $DEST/{docs,prisma/migrations,src/$NAME/{application/{dtos,mappers,services,use-cases},domain/{entities,events,repositories,value-objects},infrastructure/{config,controllers,exceptions,interceptors,messaging/kafka/consumers,modules,persistence/{mongodb,prisma}}},test}
+mkdir -p $DEST/{docs,prisma/migrations,src/$NAME/{application/{dtos,mappers,services,use-cases},domain/{entities,events,repositories,value-objects},infrastructure/{config,controllers,exceptions,interceptors,messaging/kafka/{consumers,producers},modules,persistence/{mongodb,prisma}}},test}
 
 # ─── Archivos con contenido ──────────────────────────────────────────
 
@@ -110,6 +110,10 @@ datasource db {
 
 model ${CLASS_NAME} {
   id String @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 EOF
 
@@ -178,12 +182,18 @@ async function bootstrap() {
   // 3. Configurar Kafka (para consumir mensajes asíncronos)
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
-
     options: {
       ...kafkaCommonConfig,
       consumer: {
-        groupId: '${NAME}-microservice-nestjs-consumer',
+        groupId: '${NAME}-microservice-consumer',
         allowAutoTopicCreation: false
+      },
+      subscribe: {
+        fromBeginning: true
+      },
+      run: {
+        autoCommit: false,
+        partitionsConsumedConcurrently: 3
       }
     }
   })
@@ -232,12 +242,11 @@ cat <<EOF > $DEST/src/$NAME/$NAME.module.ts
 import { Module } from '@nestjs/common'
 
 import { ${CLASS_NAME}InfrastructureModule } from './infrastructure/modules/${NAME}.module'
-import { ${CLASS_NAME}ApplicationService } from './application/services/${NAME}-application.service'
 
 @Module({
   imports: [${CLASS_NAME}InfrastructureModule],
   controllers: [],
-  providers: [${CLASS_NAME}ApplicationService],
+  providers: [],
   exports: []
 })
 export class ${CLASS_NAME}Module {}
@@ -381,10 +390,23 @@ EOF
 
 
 # * src/${NAME}/aplication/use-cases/create-${NAME}.use-case.ts
-cat <<EOF > $DEST/src/$NAME/application/use-cases/create-${NAME}.use-case.ts
-export class Create${CLASS_NAME}UseCase {
-  // TODO: implementar caso de uso
+cat <<EOF > $DEST/src/$NAME/application/use-cases/create-$NAME.use-case.ts
+import { Injectable } from '@nestjs/common'
+import { ${CLASS_NAME}CreatedEvent } from '../../domain/events/${NAME}-created.event'
+
+@Injectable()
+export class ${CLASS_NAME}CreatedUseCase {
+  processEvent(event: ${CLASS_NAME}CreatedEvent) {
+    // Log de evento recibido
+    console.log('📥 Evento recibido desde Kafka:')
+    console.log('📝 Mensaje tipado:', event)
+
+    // Calcular el tamaño estimado del mensaje
+    const sizeInBytes = Buffer.byteLength(JSON.stringify(event), 'utf8')
+    console.log(\` 📦 Tamaño estimado: \${sizeInBytes} bytes \`)
+  }
 }
+
 EOF
 
 # ? ─── src/${NAME}/domain ─────────────────────────────────────────
@@ -470,6 +492,25 @@ export class ${CLASS_NAME}Entity {
 }
 EOF
 
+# * src/${NAME}/domain/events/$NAME.event.ts
+cat <<EOF > $DEST/src/$NAME/domain/events/$NAME.event.ts
+import { DescriptionValueObject } from '../value-objects/description.value-object'
+
+export class ${CLASS_NAME}CreatedEvent {
+  public readonly occurredAt: Date
+  public readonly id: string
+  public readonly name: string
+  public readonly description: DescriptionValueObject | null
+
+  constructor(${NAME}: ${CLASS_NAME}CreatedEvent) {
+    this.occurredAt = new Date()
+    this.id = ${NAME}.id
+    this.name = ${NAME}.name
+    this.description = ${NAME}.description ?? null
+  }
+}
+EOF
+
 # * src/${NAME}/domain/repositories/${NAME}.repository.ts
 cat <<EOF > $DEST/src/$NAME/domain/repositories/$NAME.repository.ts
 import { ${CLASS_NAME}Entity } from '../entities/${NAME}.entity'
@@ -485,15 +526,21 @@ EOF
 # * src/${NAME}/domain/value-objects/description.value-object.ts
 cat <<EOF > $DEST/src/$NAME/domain/value-objects/description.value-object.ts
 export class DescriptionValueObject {
-  constructor(public readonly value: string) {}
+  public static MAX_LENGTH = 500
 
-  static create(description: string): DescriptionValueObject {
-    if (description.length > 500) {
-      throw new Error('Description cannot exceed 500 characters')
-    }
-    return new DescriptionValueObject(description)
+  constructor(public readonly value: string | undefined) {}
+
+  static create(description?: string | null): DescriptionValueObject {
+    const trimmed = description?.trim()
+    const isValid = trimmed && trimmed.length <= this.MAX_LENGTH
+    return new DescriptionValueObject(isValid ? trimmed : undefined)
+  }
+
+  get isValid(): boolean {
+    return this.value !== undefined
   }
 }
+
 EOF
 
 # ? ─── src/${NAME}/infrastructure ─────────────────────────────────────────
@@ -502,11 +549,24 @@ EOF
 cat <<EOF > $DEST/src/$NAME/infrastructure/config/kafka.config.ts
 export const kafkaCommonConfig = {
   client: {
-    clientId: '${NAME}-service',
-    // TODO: Cambiar por la URL de tu broker Kafka
+    connectionTimeout: 5000,
+    requestTimeout: 3000,
+    retry: {
+      maxRetryTime: 60000,
+      initialRetryTime: 1000,
+      retries: 10
+    },
+    run: {
+      autoCommit: false,
+      partitionsConsumedConcurrently: 3,
+      // Continúa incluso si no hay conexión inicial
+      waitForLeaders: false
+    },
+    clientId: '${NAME}-microservice',
     brokers: ['kafka1:9092']
   }
 }
+
 EOF
 
 # * src/${NAME}/infrastructure/config/kafka.config.ts
@@ -528,7 +588,8 @@ import {
 import { ${CLASS_NAME}ApplicationService } from '../../application/services/${NAME}-application.service'
 import { ${CLASS_NAME}Mapper } from '../../application/mappers/${NAME}.mapper'
 
-import { KafkaProducerService } from '../../infrastructure/messaging/kafka/kafka-producer.service'
+import { KafkaProducerService } from '../messaging/kafka/producers/kafka-producer.service'
+
 
 @Controller()
 @${CLASS_NAME}ServiceControllerMethods()
@@ -547,7 +608,7 @@ export class ${CLASS_NAME}GrpcController implements ${CLASS_NAME}ServiceControll
       const proto = this.mapper.entityToProtoResponse(entity)
 
       // 👇 Emitir mensaje Kafka
-      await this.kafkaProducer.emit${CLASS_NAME}Created(proto)
+      await this.kafkaProducer.emit${CLASS_NAME}Created('${NAME}-created', proto)
 
       return proto
     } catch (error) {
@@ -677,110 +738,112 @@ EOF
 
 # ? ─── src/${NAME}/infrastructure/messaging ───────────────────────────────────
 
-# * src/${NAME}/infrastructure/messaging/kafka/consumers/${NAME}-created.consumer.ts
+# * $DEST/src/$NAME/infrastructure/messaging/kafka/consumers/$NAME-created.consumer.ts
 cat <<EOF > $DEST/src/$NAME/infrastructure/messaging/kafka/consumers/$NAME-created.consumer.ts
+/* eslint-disable @darraghor/nestjs-typed/controllers-should-supply-api-tags */
+
+import { Controller, Inject } from '@nestjs/common'
+import { MessagePattern, Payload } from '@nestjs/microservices'
+import { ${CLASS_NAME}CreatedEvent } from '../../../../domain/events/${NAME}-created.event'
+import { ${CLASS_NAME}CreatedUseCase } from '../../../../application/use-cases/create-${NAME}.use-case'
+
+@Controller()
+export class ${CLASS_NAME}CreatedConsumer {
+  constructor(
+    @Inject(${CLASS_NAME}CreatedUseCase)
+    private readonly ${NAME}UseCase: ${CLASS_NAME}CreatedUseCase
+  ) {}
+
+  @MessagePattern('${NAME}-created')
+  handle${CLASS_NAME}Created(@Payload() message: ${CLASS_NAME}CreatedEvent) {
+    try {
+      this.${NAME}UseCase.processEvent(message)
+    } catch (error) {
+      console.error('❌ Error al procesar mensaje Kafka:', error)
+    }
+  }
+}
+
+EOF
+
+# * $DEST/src/$NAME/infrastructure/messaging/producers/kafka/kafka-producer.service.ts
+cat <<EOF > $DEST/src/$NAME/infrastructure/messaging//kafka/producers/kafka-producer.service.ts
 import { Injectable, Inject, OnModuleInit } from '@nestjs/common'
 import { ClientKafka } from '@nestjs/microservices'
 import { lastValueFrom } from 'rxjs'
 
-// TODO: Cambiar por tus propias importaciones de proto
-import { ${CLASS_NAME} } from '@app/proto'
+// import { ${CLASS_NAME} } from '@app/proto'
+import { ${CLASS_NAME}CreatedEvent } from '../../../../domain/events/${NAME}-created.event'
+import { DescriptionValueObject } from '../../../../domain/value-objects/description.value-object'
 
 @Injectable()
 export class KafkaProducerService implements OnModuleInit {
-  constructor(@Inject('KAFKA_SERVICE') private readonly client: ClientKafka) {}
+  constructor(
+    @Inject('KAFKA_PRODUCER') private readonly producer: ClientKafka
+  ) {}
 
   async onModuleInit() {
-    await this.client.connect()
+    await this.producer.connect()
   }
 
-  async emit${CLASS_NAME}Created(payload: ${CLASS_NAME}) {
+  async emit${CLASS_NAME}Created(topic: string, payload: any) {
+    const event = new ${CLASS_NAME}CreatedEvent({
+      id: payload.id,
+      name: payload.name,
+      description: new DescriptionValueObject(payload.description),
+      occurredAt: new Date()
+    })
+
     const message = {
-      key: payload.id,
-      value: JSON.stringify(payload)
+      key: event.id.toString(),
+      value: JSON.stringify(event)
     }
 
     const sizeInBytes = Buffer.byteLength(message.value, 'utf8')
 
-    // * Debugging de tamaño del mensaje
-    // console.log(\`📦 Tamaño del mensaje Kafka: \${sizeInBytes} bytes\`)
-
-    // Validación
     if (sizeInBytes > 1024 * 1024) {
       throw new Error('❌ Payload demasiado grande para Kafka (> 1MB)')
     }
 
-    // Enviar mensaje a Kafka
-    await lastValueFrom(this.client.emit('${NAME}-created', message))
+    await lastValueFrom(this.producer.emit(topic, message))
   }
 }
-EOF
 
-# * src/${NAME}/infrastructure/messaging/kafka/kafka-producer.service.ts
-cat <<EOF > $DEST/src/$NAME/infrastructure/messaging/kafka/kafka-producer.service.ts
-import { Injectable, Inject, OnModuleInit } from '@nestjs/common'
-import { ClientKafka } from '@nestjs/microservices'
-import { lastValueFrom } from 'rxjs'
-
-// TODO: Cambiar por tus propias importaciones de proto
-import { ${CLASS_NAME} } from '@app/proto'
-
-@Injectable()
-export class KafkaProducerService implements OnModuleInit {
-  constructor(@Inject('KAFKA_SERVICE') private readonly client: ClientKafka) {}
-
-  async onModuleInit() {
-    await this.client.connect()
-  }
-
-  async emit${CLASS_NAME}Created(payload: ${CLASS_NAME}) {
-    const message = {
-      key: payload.id,
-      value: JSON.stringify(payload)
-    }
-
-    const sizeInBytes = Buffer.byteLength(message.value, 'utf8')
-
-    // * Debugging de tamaño del mensaje
-    // console.log(\`📦 Tamaño del mensaje Kafka: \${sizeInBytes} bytes\`)
-
-    // Validación
-    if (sizeInBytes > 1024 * 1024) {
-      throw new Error('Payload demasiado grande para Kafka (> 1MB) 🚫')
-    }
-
-    // Enviar mensaje a Kafka
-    await lastValueFrom(this.client.emit('${NAME}-created', message))
-  }
-}
 EOF
 
 # * src/${NAME}/infrastructure/messaging/kafka/kafka.module.ts
 cat <<EOF > $DEST/src/$NAME/infrastructure/messaging/kafka/kafka.module.ts
 import { Module } from '@nestjs/common'
 import { ClientsModule, Transport } from '@nestjs/microservices'
-import { KafkaProducerService } from './kafka-producer.service'
+import { KafkaProducerService } from './producers/kafka-producer.service'
 import { ${CLASS_NAME}CreatedConsumer } from './consumers/${NAME}-created.consumer'
 
 import { kafkaCommonConfig } from '../../config/kafka.config'
 
+import { ${CLASS_NAME}CreatedUseCase } from '../../../application/use-cases/create-${NAME}.use-case'
+import { Partitioners } from 'kafkajs'
+
 @Module({
   imports: [
+    // Kafka para producir mensajes
     ClientsModule.register([
       {
-        name: 'KAFKA_SERVICE',
+        name: 'KAFKA_PRODUCER',
         transport: Transport.KAFKA,
         options: {
           ...kafkaCommonConfig,
-          consumer: {
-            groupId: 'unused-producer-only'
+          producer: {
+            allowAutoTopicCreation: true,
+            idempotent: true,
+            createPartitioner: Partitioners.LegacyPartitioner,
+            retry: { retries: 3 }
           }
         }
       }
     ])
   ],
   controllers: [${CLASS_NAME}CreatedConsumer],
-  providers: [KafkaProducerService],
+  providers: [KafkaProducerService, ${CLASS_NAME}CreatedUseCase],
   exports: [KafkaProducerService]
 })
 export class KafkaModule {}
@@ -788,7 +851,7 @@ EOF
 
 # ? ─── src/${NAME}/infrastructure/persistencee ─────────────────────────────────
 
-# * src/${NAME}/infrastructure/persistence/prisma/$NAME-prisma.repository.ts
+# * $DEST/src/$NAME/infrastructure/persistence/prisma/$NAME-prisma.repository.ts
 cat <<EOF > $DEST/src/$NAME/infrastructure/persistence/prisma/$NAME-prisma.repository.ts
 /* eslint-disable @darraghor/nestjs-typed/injectable-should-be-provided */
 
@@ -923,6 +986,8 @@ echo "✅ Microservicio '$NAME' generado con estructura y contenido base."
 
 # Generar archivos de proto
 
-bash ./init-proto.sh $NAME $CLASS_NAME $INSTANCE_NAME $CAMEL_CASE_NAME 
+# Verificar que el script init-proto.sh exista y sea ejecutable
+./init-proto.sh $NAME $CLASS_NAME $INSTANCE_NAME $CAMEL_CASE_NAME
+
 
 npm run format

@@ -1,61 +1,121 @@
+// * Generación automática con ts-proto y soporte NestJS
+// * Ejecuta: 
+// * npx protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=./ --ts_proto_opt=nestJs=true ./example.proto
+
 syntax = "proto3";
 
 package example;
 
+//
+// ================================
+//   📦 Servicio ExampleService
+// ================================
+//
 // Contratos de comunicación entre el cliente y el servidor
 // para la gestión de ejemplos en la aplicación.
+//
 service ExampleService {
+  // * Crear un nuevo ejemplo
   rpc CreateExample(CreateExampleDto) returns (Example) {}
-  rpc GetAllExamples(Empty) returns (Examples) {}
-  rpc GetExampleById(GetExampleByIdDto) returns (Example) {}
-  rpc UpdateExample(UpdateExampleDto) returns (Example) {}
-  rpc DeleteExample(GetExampleByIdDto) returns (Empty) {}
 
-//   rpc QueryExamples(stream PaginationDto) returns (stream Examples) {}
+  // * Obtener todos los ejemplos (no paginado)
+  rpc GetAllExamples(ExampleEmpty) returns (Examples) {}
+
+  // * Obtener un ejemplo por ID
+  rpc GetExampleById(GetExampleByIdDto) returns (Example) {}
+
+  // * Actualizar un ejemplo existente
+  rpc UpdateExample(UpdateExampleDto) returns (Example) {}
+
+  // * Eliminar un ejemplo por ID
+  rpc DeleteExample(GetExampleByIdDto) returns (ExampleEmpty) {}
+
+  // * Obtener ejemplos paginados (clásico page + limit)
+//   rpc GetPaginatedExamples(PaginationRequest) returns (PaginatedExamples) {}
+
+  // * Soporte para scroll infinito (cursor-based pagination)
+  rpc GetExamplesByCursor(CursorPaginationRequest) returns (CursorPaginatedExamples) {}
 }
 
-// message PaginationDto {
-//     int32 page = 1;          
-//     int32 skip = 2;      
+//
+// ================================
+//   📥 Mensajes de entrada
+// ================================
+//
+
+// ! Mensaje vacío (común en operaciones sin payload)
+message ExampleEmpty {}
+
+// * Crear nuevo ejemplo
+message CreateExampleDto {
+  string name = 1;
+  optional string description = 2;
+}
+
+// * Actualizar un ejemplo
+message UpdateExampleDto {
+  string id = 1;
+  UpdateExampleData example = 2;
+}
+
+// * Obtener un ejemplo por su ID
+message GetExampleByIdDto {
+  string id = 1;
+}
+
+// * Solicitud de paginación clásica
+// message PaginationRequest {
+//   int32 page = 1;  // Página actual (empieza en 1)
+//   int32 limit = 2; // Elementos por página
 // }
 
-// Mensajes utilizados en los contratos de comunicación
-
-// Mensaje vacío utilizado para las peticiones que no requieren datos adicionales.
-message Empty {}
-
-// Mensaje utilizado para crear un nuevo ejemplo.
-message CreateExampleDto {
-    string name = 1;
-    optional string description = 2;
+// * Solicitud de paginación por cursor (scroll infinito)
+message CursorPaginationRequest {
+  string afterId = 1; // ID del último elemento visto
+  int32 limit = 2;    // Elementos siguientes a devolver
 }
 
-// Mensaje utilizado para actualizar un ejemplo existente.
-message UpdateExampleDto {
-    string id = 1;
-    UpdateExampleData example = 2;
-}
+//
+// ================================
+//   📤 Mensajes de salida
+// ================================
+//
 
-// Mensaje utilizado para obtener un ejemplo por su ID.
-message GetExampleByIdDto {
-    string id = 1;
-}
-
-
-// Mensaje utilizado para devolver un ejemplo.
+// * Lista de múltiples ejemplos (no paginada)
 message Examples {
-    repeated Example examples = 1;
+  repeated Example examples = 1;
 }
 
-// Mensaje que representa un ejemplo en la aplicación.
+// * Lista de ejemplos paginada con `page`/`limit`
+message PaginatedExamples {
+  repeated Example examples = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+// * Lista de ejemplos paginada con `cursor`
+message CursorPaginatedExamples {
+  repeated Example examples = 1;
+  string nextCursor = 2;
+  bool hasMore = 3;
+}
+
+//
+// ================================
+//   🧱 Modelo base: Example
+// ================================
+//
+
+// * Representación base de un ejemplo
 message Example {
-    string id = 1;            // Identificador único del ejemplo.                         
-    string name = 2;
-    optional string description = 3;
+  string id = 1;            // ! ID único del ejemplo
+  string name = 2;
+  optional string description = 3;
 }
 
+// * Datos anidados para actualizar un ejemplo
 message UpdateExampleData {
-    string name = 1;
-    optional string description = 2;
+  string name = 1;
+  optional string description = 2;
 }
-

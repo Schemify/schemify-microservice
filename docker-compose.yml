@@ -3,7 +3,7 @@ services:
     container_name: schemify-microservice
     build:
       context: .
-      dockerfile: apps/schemify-microservice-nestjs/Dockerfile
+      dockerfile: apps/schemify-microservice/Dockerfile
     ports:
       - '${SERVICE_PORT}:${SERVICE_PORT}'
       - '50051:50051'
