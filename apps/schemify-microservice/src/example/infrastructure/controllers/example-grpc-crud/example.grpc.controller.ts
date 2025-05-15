@@ -1,18 +1,22 @@
-/* eslint-disable @darraghor/nestjs-typed/injectable-should-be-provided */
 /* eslint-disable @darraghor/nestjs-typed/controllers-should-supply-api-tags */
 
-import { Controller } from '@nestjs/common'
+import { Controller, Logger } from '@nestjs/common'
 import { CommandBus, QueryBus } from '@nestjs/cqrs'
 import { example } from '@app/proto'
 import { ExampleMapper } from '@microservice/schemify-microservice/example/application/mappers/example.mapper'
 
-import { CreateExampleCommand } from '@microservice/schemify-microservice/example/application/commands/create-example/create-example.command'
-import { UpdateExampleCommand } from '@microservice/schemify-microservice/example/application/commands/update-example/update-example.command'
-import { DeleteExampleCommand } from '@microservice/schemify-microservice/example/application/commands/delete-example/delete-example.command'
-import { GetExampleByIdQuery } from '@microservice/schemify-microservice/example/application/queries/get-example-by-id/get-example-by-id.query'
-import { GetExamplesByCursorQuery } from '@microservice/schemify-microservice/example/application/queries/get-examples-by-cursor/get-examples-by-cursor.query'
+import {
+  CreateExampleCommand,
+  DeleteExampleCommand,
+  UpdateExampleCommand
+} from '@microservice/schemify-microservice/example/application/commands'
 
-import { GetAllExamplesQuery } from '@microservice/schemify-microservice/example/application/queries/get-all-examples/get-all-examples.query'
+import {
+  GetAllExamplesQuery,
+  GetExamplesByCursorQuery,
+  GetExampleByIdQuery
+} from '@microservice/schemify-microservice/example/application/queries'
+
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 
 import { CursorResult } from '@microservice/schemify-microservice/libs/shared/interfaces/pagination/cursor-result.interface'
@@ -20,11 +24,15 @@ import { CursorResult } from '@microservice/schemify-microservice/libs/shared/in
 @Controller()
 @example.ExampleServiceControllerMethods()
 export class ExampleGrpcController implements example.ExampleServiceController {
+  private readonly logger = new Logger(ExampleGrpcController.name)
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly mapper: ExampleMapper
-  ) {}
+  ) {
+    this.logger.log('ExampleGrpcController loaded')
+    console.log('QueryBus Handlers:', (this.queryBus as any).handlers)
+  }
 
   async createExample(
     request: example.CreateExampleDto
@@ -72,6 +80,7 @@ export class ExampleGrpcController implements example.ExampleServiceController {
       GetAllExamplesQuery,
       ExampleEntity[]
     >(new GetAllExamplesQuery())
+
     return {
       examples: entities.map((e) => this.mapper.entityToProto(e))
     }

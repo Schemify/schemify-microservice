@@ -1,5 +1,3 @@
-version: '3.8'
-
 networks:
   schemify-nestjs_schemify-kafka-net:
     external: true

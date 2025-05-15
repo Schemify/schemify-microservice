@@ -28,7 +28,7 @@ export class UpdateExampleHandler
       updatedAt: new Date()
     })
 
-    await this.repository.save(updated)
+    await this.repository.update(command.id, updated)
     updated.commit()
     return updated
   }

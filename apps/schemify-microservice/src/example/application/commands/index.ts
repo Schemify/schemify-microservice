@@ -7,3 +7,7 @@ export const CommandHandlers = [
   UpdateExampleHandler,
   DeleteExampleHandler
 ]
+
+export * from './create-example/create-example.command'
+export * from './update-example/update-example.command'
+export * from './delete-example/delete-example.command'
