@@ -6,8 +6,10 @@ import { PrismaExampleRepository } from '../persistence/prisma/example-prisma.re
 import { PrismaModule } from '../persistence/prisma/prisma.module'
 import { KafkaModule } from '../messaging/kafka/kafka.module'
 
+import { CqrsModule } from '@nestjs/cqrs'
+
 @Module({
-  imports: [PrismaModule, KafkaModule],
+  imports: [CqrsModule, PrismaModule, KafkaModule],
   controllers: [ExampleGrpcController],
   providers: [
     ExampleMapper,
@@ -18,7 +20,7 @@ import { KafkaModule } from '../messaging/kafka/kafka.module'
   ],
   exports: ['ExampleRepository', ExampleMapper]
 })
-export class ExampleInfrastructureModule {}
+export class InfrastructureModule {}
 
 // import { Module } from '@nestjs/common'
 

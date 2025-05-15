@@ -1,3 +1,5 @@
-import { ExampleCreatedHandler } from './example-created/example-created.handler'
+import { ExampleCreatedEventHandler } from './example-created/example-created-event.handler'
 
-export const EventHandlers = [ExampleCreatedHandler]
+export const KafkaEventHandlers = [ExampleCreatedEventHandler]
+
+export * from './example-created/example-created-event.handler'

@@ -8,7 +8,7 @@ import { join } from 'path'
 
 import { GrpcLoggingInterceptor } from './example/infrastructure/interceptors/grpc-logging.interceptor'
 
-import { kafkaCommonConfig } from './example/infrastructure/config/kafka.config'
+import { kafkaConsumerOptions } from './example/infrastructure/messaging/kafka/config/kafka-factory.config'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -32,23 +32,21 @@ async function bootstrap() {
   }
 
   // 3. Configurar Kafka (para consumir mensajes asíncronos)
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.KAFKA,
-    options: {
-      ...kafkaCommonConfig,
-      consumer: {
-        groupId: 'schemify-microservice-consumer',
-        allowAutoTopicCreation: false
-      },
-      subscribe: {
-        fromBeginning: true
-      },
-      run: {
-        autoCommit: false,
-        partitionsConsumedConcurrently: 3
-      }
-    }
-  })
+
+  // Todos los consumidores que comparten el mismo groupId cooperan para leer un mismo topic.
+  // Kafka balancea las particiones de un topic entre los miembros del grupo.
+  // Solo un miembro del grupo consume una partición a la vez.
+
+  //   brokers	Dónde vive el clúster Kafka	['localhost:9092']
+  // clientId	Identidad única del cliente	'auth-microservice'
+  // consumer.groupId	Grupo de trabajo para consumir tópicos	'auth-service-group'
+
+  app.connectMicroservice<MicroserviceOptions>(
+    kafkaConsumerOptions('schemify-client', 'schemify-group', [
+      process.env.KAFKA_BROKER || 'localhost:9092'
+    ])
+  )
+
   // 4. Iniciar los microservicios
   await app.startAllMicroservices()
   logger.log('✅ Microservicio gRPC listo en puerto 50051')

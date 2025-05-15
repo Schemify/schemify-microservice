@@ -1,35 +1,23 @@
 import { Module } from '@nestjs/common'
-import { ClientsModule, Transport } from '@nestjs/microservices'
-import { KafkaProducerService } from './producers/kafka-producer.service'
-import { ExampleCreatedConsumer } from './consumers'
+import { ClientsModule } from '@nestjs/microservices'
 
-import { kafkaCommonConfig } from '../../config/kafka.config'
+import { KafkaProducers } from './producers'
+import { KafkaConsumers } from './consumers'
 
-import { Partitioners } from 'kafkajs'
-
-import { ConsumerHandlers } from '@/application/example/consumers'
+import { KafkaEventHandlers } from '@microservice/schemify-microservice/example/application/events'
+import { kafkaProducerOptions } from './config/kafka-factory.config'
 
 @Module({
   imports: [
     // Kafka para producir mensajes
     ClientsModule.register([
-      {
-        name: 'KAFKA_PRODUCER',
-        transport: Transport.KAFKA,
-        options: {
-          ...kafkaCommonConfig,
-          producer: {
-            allowAutoTopicCreation: true,
-            idempotent: true,
-            createPartitioner: Partitioners.LegacyPartitioner,
-            retry: { retries: 3 }
-          }
-        }
-      }
+      kafkaProducerOptions('KAFKA_PRODUCER', 'schemify-producer', [
+        process.env.KAFKA_BROKER || 'localhost:9092'
+      ])
     ])
   ],
-  controllers: [ExampleCreatedConsumer],
-  providers: [KafkaProducerService],
-  exports: [KafkaProducerService]
+  controllers: [...KafkaConsumers],
+  providers: [...KafkaProducers, ...KafkaEventHandlers],
+  exports: [...KafkaProducers]
 })
 export class KafkaModule {}
