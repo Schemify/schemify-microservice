@@ -12,7 +12,7 @@ import { kafkaProducerOptions } from './config/kafka-factory.config'
     // Kafka para producir mensajes
     ClientsModule.register([
       kafkaProducerOptions('KAFKA_PRODUCER', 'schemify-producer', [
-        process.env.KAFKA_BROKER || 'localhost:9092'
+        process.env.KAFKA_BROKER || 'kafka1:9092'
       ])
     ])
   ],

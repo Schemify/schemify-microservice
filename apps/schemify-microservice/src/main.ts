@@ -42,9 +42,7 @@ async function bootstrap() {
   // consumer.groupId	Grupo de trabajo para consumir tópicos	'auth-service-group'
 
   app.connectMicroservice<MicroserviceOptions>(
-    kafkaConsumerOptions('schemify-client', 'schemify-group', [
-      process.env.KAFKA_BROKER || 'localhost:9092'
-    ])
+    kafkaConsumerOptions('schemify-client', 'schemify-group', ['kafka1:9092'])
   )
 
   // 4. Iniciar los microservicios

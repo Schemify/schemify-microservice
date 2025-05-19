@@ -1,7 +1,7 @@
 #!/bin/bash
 NODES=$1
 CLUSTER_ID="EmptNWtoR4GGWx-BH6nGLQ"
-NETWORK="schemify-nestjs_schemify-kafka-net"
+NETWORK="schemify-microservice_schemify-kafka-net"
 
 
 PROJECT_ROOT=$(realpath "$(dirname "$0")/..")
@@ -44,7 +44,7 @@ for i in $(seq 1 $NODES); do
       - "$BROKER_PORT:9092"
       - "$CTRL_PORT:9093"
     volumes:
-      - ./data/kafka$i/data:/var/lib/kafka/data
+      - ../../data/kafka$i:/var/lib/kafka/data
     environment:
       # 🧠 Identificación del broker
       KAFKA_NODE_ID: $i

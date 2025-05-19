@@ -19,7 +19,6 @@ export class GetAllExamplesHandler
   }
 
   async execute(): Promise<any> {
-    const all = await this.repository.findAll()
-    return all.map((e) => e.toPrimitives())
+    return this.repository.findAll()
   }
 }

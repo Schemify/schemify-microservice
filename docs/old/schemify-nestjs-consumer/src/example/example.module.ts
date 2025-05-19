@@ -12,7 +12,7 @@
 //         options: {
 //           client: {
 //             brokers: ['kafka1:9092', 'kafka2:9092'],
-//             clientId: 'example-schemify-nestjs'
+//             clientId: 'example-schemify-microservice'
 //           },
 //           producer: {
 //             allowAutoTopicCreation: true

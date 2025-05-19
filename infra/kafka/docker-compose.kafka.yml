@@ -1,0 +1,63 @@
+services:
+  kafka1:
+    image: confluentinc/cp-kafka:7.8.0
+    container_name: kafka1
+    hostname: kafka1
+    ports:
+      - '9092:9092'
+      - '9093:9093'
+    volumes:
+      - kafka1-data:/var/lib/kafka/data
+
+    environment:
+      # 🧠 Identificación del broker
+      KAFKA_NODE_ID: 1
+      KAFKA_BROKER_ID: 1
+      CLUSTER_ID: 'EmptNWtoR4GGWx-BH6nGLQ'
+
+      # 🧠 Roles y quorum (modo KRaft sin ZooKeeper)
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9093'
+
+      # 🌐 Configuración de listeners (exposición y conexiones)
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka1:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+
+      # 🛡️ Seguridad y consistencia de replicación
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_MIN_INSYNC_REPLICAS: 2
+
+      # ⚡ Tiempo inicial de espera para rebalanceo
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+
+      # 🛡️ Límite recomendado: 1 MB
+      KAFKA_MESSAGE_MAX_BYTES: 1048576
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 1048576
+      KAFKA_MAX_REQUEST_SIZE: 1048576
+    networks:
+      - kafka-shared-net
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-cluster-ui
+    ports:
+      - '8081:8080'
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:9092
+    depends_on:
+      - kafka1
+    networks:
+      - kafka-shared-net
+
+volumes:
+  kafka1-data:
+
+networks:
+  kafka-shared-net:
+    name: kafka-shared-net
+    driver: bridge

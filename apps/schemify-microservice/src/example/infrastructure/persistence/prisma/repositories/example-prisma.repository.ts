@@ -5,8 +5,11 @@ import { PrismaService } from '../prisma.service'
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 import { ExampleRepository } from '@microservice/schemify-microservice/example/domain/repositories/example.repository'
 
+import { Logger } from '@nestjs/common'
+
 @Injectable()
 export class PrismaExampleRepository implements ExampleRepository {
+  private readonly logger: Logger = new Logger(PrismaExampleRepository.name)
   constructor(private readonly prisma: PrismaService) {}
 
   async create(entity: ExampleEntity): Promise<ExampleEntity> {
@@ -67,6 +70,9 @@ export class PrismaExampleRepository implements ExampleRepository {
   async findAll(): Promise<ExampleEntity[]> {
     const results = await this.prisma.example.findMany()
 
+    this.logger.log(`Found ${results.length} examples`)
+    this.logger.debug(results)
+
     return results.map((result) =>
       ExampleEntity.fromPrimitives({
         id: result.id,
@@ -85,7 +91,7 @@ export class PrismaExampleRepository implements ExampleRepository {
   }
 
   async findWithCursor(
-    afterId: string,
+    afterId: string | null,
     limit: number
   ): Promise<{
     items: ExampleEntity[]
@@ -96,26 +102,28 @@ export class PrismaExampleRepository implements ExampleRepository {
 
     const results = await this.prisma.example.findMany({
       take,
-      skip: afterId ? 1 : 0,
-      cursor: afterId ? { id: afterId } : undefined,
+      ...(afterId && {
+        cursor: { id: afterId },
+        skip: 1
+      }),
       orderBy: { id: 'asc' }
     })
 
     const hasMore = results.length > limit
-    const items = hasMore ? results.slice(0, -1) : results
-    const nextCursor = hasMore ? items[items.length - 1].id : null
+    const sliced = hasMore ? results.slice(0, -1) : results
+    const last = sliced.at(-1)
 
     return {
-      items: items.map((result) =>
+      items: sliced.map((r) =>
         ExampleEntity.fromPrimitives({
-          id: result.id,
-          name: result.name,
-          description: result.description ?? '',
-          createdAt: result.createdAt,
-          updatedAt: result.updatedAt
+          id: r.id,
+          name: r.name,
+          description: r.description ?? '',
+          createdAt: r.createdAt,
+          updatedAt: r.updatedAt
         })
       ),
-      nextCursor,
+      nextCursor: last?.id ?? null,
       hasMore
     }
   }

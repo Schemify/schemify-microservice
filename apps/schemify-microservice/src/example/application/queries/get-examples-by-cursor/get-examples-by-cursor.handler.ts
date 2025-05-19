@@ -19,7 +19,7 @@ export class GetExamplesByCursorHandler
     )
 
     return {
-      examples: items.map((e) => e.toPrimitives()),
+      items,
       nextCursor,
       hasMore
     }

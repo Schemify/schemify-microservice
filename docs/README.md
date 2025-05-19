@@ -55,14 +55,14 @@ npx protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=.
 Mover archivo resultante a libs/common/src/types
 
 "compilerOptions": {
-"tsConfigPath": "apps/schemify-nestjs/tsconfig.app.json",
+"tsConfigPath": "apps/schemify-microservice/tsconfig.app.json",
 "assets": ["proto/*.proto"],
 "watchAssets": true
 }
 
 🔒 Logger centralizado (por ejemplo con Pino) y redirección de logs Kafka a archivos o servicios externos.
 
-$ docker tag schemify-nestjs-schemify-microservice ixyz0/schemify-microservice:v0.1.0
+$ docker tag schemify-microservice-schemify-microservice ixyz0/schemify-microservice:v0.1.0
 
 docker push ixyz0/schemify-microservice:v0.1.0
 
@@ -83,7 +83,7 @@ minikube start
 # Verificar los nodos
 kubectl get nodes
 
-cd schemify-nestjs
+cd schemify-microservice
 mkdir deployments
 cd deployments
 helm create schemify-microservice

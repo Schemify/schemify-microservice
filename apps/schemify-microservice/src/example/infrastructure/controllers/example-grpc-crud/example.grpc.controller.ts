@@ -1,3 +1,4 @@
+/* eslint-disable @darraghor/nestjs-typed/injectable-should-be-provided */
 /* eslint-disable @darraghor/nestjs-typed/controllers-should-supply-api-tags */
 
 import { Controller, Logger } from '@nestjs/common'
@@ -43,6 +44,7 @@ export class ExampleGrpcController implements example.ExampleServiceController {
       props.description.value
     )
     const entity = await this.commandBus.execute(command)
+
     return this.mapper.entityToProto(entity)
   }
 

@@ -13,6 +13,10 @@ export class ExampleMapper {
   }
 
   entityToProto(entity: ExampleEntity): example.Example {
+    if (!entity) {
+      throw new Error('entityToProto: received undefined entity')
+    }
+
     return {
       id: entity.id,
       name: entity.props.name.value,
