@@ -62,7 +62,7 @@ npx protoc \
   --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd \
   --ts_proto_out=./ \
   --ts_proto_opt=nestJs=true \
-  ./apps/${MICRO}/src/${MOD}/infraestructure/grpc/proto/${ORIGEN}/${FILE}.proto
+  ./apps/${MICRO}/src/${MOD}/infrastructure/grpc/proto/${ORIGEN}/${FILE}.proto
 ```
 
 #### 2.4 Movimiento del código generado

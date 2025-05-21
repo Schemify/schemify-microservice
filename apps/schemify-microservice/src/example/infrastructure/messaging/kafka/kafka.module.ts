@@ -21,3 +21,5 @@ import { kafkaProducerOptions } from './config/kafka-factory.config'
   exports: [...KafkaProducers]
 })
 export class KafkaModule {}
+
+// @nestjs/event-emitter
