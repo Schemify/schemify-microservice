@@ -25,8 +25,8 @@ import { Inject, NotFoundException } from '@nestjs/common'
 
 import { DeleteExampleCommand } from './delete-example.command'
 
-import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/ExampleWriteRepository'
-import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/ExampleReadRepository'
+import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-write-repository'
+import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-read-repository'
 
 @CommandHandler(DeleteExampleCommand)
 export class DeleteExampleHandler

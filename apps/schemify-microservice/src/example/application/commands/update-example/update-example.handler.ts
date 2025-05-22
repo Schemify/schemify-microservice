@@ -32,8 +32,8 @@ import { UpdateExampleCommand } from './update-example.command'
 
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 
-import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/ExampleReadRepository'
-import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/ExampleWriteRepository'
+import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-read-repository'
+import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-write-repository'
 @CommandHandler(UpdateExampleCommand)
 export class UpdateExampleHandler
   implements ICommandHandler<UpdateExampleCommand>

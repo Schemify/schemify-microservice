@@ -29,7 +29,7 @@ import { example } from '@app/proto'
 
 import { GetExampleByIdQuery } from './get-example-by-id.query'
 
-import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/ExampleReadRepository'
+import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-read-repository'
 import { ExampleMapper } from '@microservice/schemify-microservice/example/application/mappers/example.mapper'
 
 @QueryHandler(GetExampleByIdQuery)

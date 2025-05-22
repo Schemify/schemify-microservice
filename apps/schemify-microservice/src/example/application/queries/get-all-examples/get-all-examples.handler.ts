@@ -30,7 +30,7 @@ import { example } from '@app/proto'
 
 import { GetAllExamplesQuery } from './get-all-examples.query'
 
-import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/ExampleReadRepository'
+import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-read-repository'
 import { ExampleMapper } from '@microservice/schemify-microservice/example/application/mappers/example.mapper'
 
 @QueryHandler(GetAllExamplesQuery)

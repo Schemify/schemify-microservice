@@ -1,6 +1,6 @@
 // * Generación automática con ts-proto y soporte NestJS
 // * Ejecuta: 
-// * npx protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=./ --ts_proto_opt=nestJs=true ./example.proto
+// * npx protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=./ --ts_proto_opt=nestJs=true ./libs/proto/src/services/example_service/example.proto
 
 syntax = "proto3";
 
@@ -16,25 +16,25 @@ package example;
 //
 service ExampleService {
   // * Crear un nuevo ejemplo
-  rpc CreateExample(CreateExampleDto) returns (Example) {}
+  rpc createExample(CreateExampleDto) returns (Example) {}
 
   // * Obtener todos los ejemplos (no paginado)
-  rpc GetAllExamples(ExampleEmpty) returns (Examples) {}
+  rpc getAllExamples(ExampleEmpty) returns (Examples) {}
 
   // * Obtener un ejemplo por ID
-  rpc GetExampleById(GetExampleByIdDto) returns (Example) {}
+  rpc getExampleById(GetExampleByIdDto) returns (Example) {}
 
   // * Actualizar un ejemplo existente
-  rpc UpdateExample(UpdateExampleDto) returns (Example) {}
+  rpc updateExample(UpdateExampleDto) returns (Example) {}
 
   // * Eliminar un ejemplo por ID
-  rpc DeleteExample(GetExampleByIdDto) returns (ExampleEmpty) {}
+  rpc deleteExample(GetExampleByIdDto) returns (ExampleEmpty) {}
 
   // * Obtener ejemplos paginados (clásico page + limit)
-//   rpc GetPaginatedExamples(PaginationRequest) returns (PaginatedExamples) {}
+//   rpc getPaginatedExamples(PaginationRequest) returns (PaginatedExamples) {}
 
   // * Soporte para scroll infinito (cursor-based pagination)
-  rpc GetExamplesByCursor(CursorPaginationRequest) returns (CursorPaginatedExamples) {}
+  rpc getExamplesByCursor(CursorPaginationRequest) returns (CursorPaginatedExamples) {}
 }
 
 //

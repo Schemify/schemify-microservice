@@ -4,7 +4,7 @@ import { ClientsModule } from '@nestjs/microservices'
 import { KafkaProducers } from './producers'
 import { KafkaConsumers } from './consumers'
 
-import { KafkaEventHandlers } from '@microservice/schemify-microservice/example/application/events'
+import { EventHandlers } from '@microservice/schemify-microservice/example/application/events'
 import { kafkaProducerOptions } from './config/kafka-factory.config'
 
 @Module({
@@ -17,9 +17,7 @@ import { kafkaProducerOptions } from './config/kafka-factory.config'
     ])
   ],
   controllers: [...KafkaConsumers],
-  providers: [...KafkaProducers, ...KafkaEventHandlers],
+  providers: [...KafkaProducers, ...EventHandlers],
   exports: [...KafkaProducers]
 })
 export class KafkaModule {}
-
-// @nestjs/event-emitter
