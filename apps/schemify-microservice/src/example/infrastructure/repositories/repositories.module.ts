@@ -1,24 +1,30 @@
-// 📁 repositories.module.ts
-
 import { Module } from '@nestjs/common'
-import { PrismaModule } from './prisma/config/prisma.module'
+import { PrismaModule } from './prisma/prisma.module'
 
-// Implementaciones técnicas
-import { ExampleReadPrismaRepository } from './prisma/read/example-read.repository'
-import { ExampleWritePrismaRepository } from './prisma/write/example-write.repository'
+// ✅ Puerto de salida (dominio)
+import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-write.repository'
+import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-read-repository'
+
+// ✅ Adaptadores técnicos (infraestructura)
+import { ExampleWritePrismaRepository } from '@microservice/schemify-microservice/example/infrastructure/repositories/prisma/write/example-write.repository'
+import { ExampleReadPrismaRepository } from '@microservice/schemify-microservice/example/infrastructure/repositories/prisma/read/example-read.repository'
+
+import { SharedModule } from '@microservice/schemify-microservice/libs/shared/shared.module'
+import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, SharedModule],
   providers: [
+    ExampleMapper,
     {
-      provide: 'ExampleReadRepository',
-      useClass: ExampleReadPrismaRepository
+      provide: ExampleWriteRepository,
+      useClass: ExampleWritePrismaRepository
     },
     {
-      provide: 'ExampleWriteRepository',
-      useClass: ExampleWritePrismaRepository
+      provide: ExampleReadRepository,
+      useClass: ExampleReadPrismaRepository
     }
   ],
-  exports: ['ExampleReadRepository', 'ExampleWriteRepository']
+  exports: [ExampleWriteRepository, ExampleReadRepository]
 })
 export class RepositoriesModule {}

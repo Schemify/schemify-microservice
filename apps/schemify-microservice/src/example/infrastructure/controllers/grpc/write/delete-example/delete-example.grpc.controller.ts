@@ -19,9 +19,9 @@ import { CommandBus } from '@nestjs/cqrs'
 import { example } from '@app/proto'
 
 import { DeleteExampleCommand } from '@microservice/schemify-microservice/example/application/commands'
+import { GrpcMethod } from '@nestjs/microservices'
 
 @Controller()
-@example.ExampleServiceControllerMethods()
 export class DeleteExampleGrpcController {
   constructor(private readonly commandBus: CommandBus) {}
 
@@ -44,6 +44,8 @@ export class DeleteExampleGrpcController {
    * @param request DTO gRPC con el ID del recurso
    * @returns Objeto vacío `ExampleEmpty`
    */
+
+  @GrpcMethod(example.EXAMPLE_SERVICE_NAME, 'deleteExample')
   async deleteExample(
     request: example.GetExampleByIdDto
   ): Promise<example.ExampleEmpty> {

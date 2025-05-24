@@ -24,10 +24,10 @@ import { CursorResult } from '@microservice/schemify-microservice/libs/shared/in
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 
 import { GetExamplesByCursorQuery } from '@microservice/schemify-microservice/example/application/queries'
-import { ExampleMapper } from '@microservice/schemify-microservice/example/application/mappers/example.mapper'
+import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+import { GrpcMethod } from '@nestjs/microservices'
 
-@Controller()
-@example.ExampleServiceControllerMethods()
+@Controller('ExampleService')
 export class GetExamplesByCursorGrpcController {
   constructor(
     private readonly queryBus: QueryBus,
@@ -57,6 +57,8 @@ export class GetExamplesByCursorGrpcController {
    * @param request objeto `CursorPaginationRequest` generado desde `.proto`
    * @returns CursorPaginatedExamples (protobuf)
    */
+
+  @GrpcMethod(example.EXAMPLE_SERVICE_NAME, 'getExamplesByCursor')
   async getExamplesByCursor(
     request: example.CursorPaginationRequest
   ): Promise<example.CursorPaginatedExamples> {

@@ -21,10 +21,10 @@ import { example } from '@app/proto'
 
 import { CreateExampleCommand } from '@microservice/schemify-microservice/example/application/commands'
 
-import { ExampleMapper } from '@microservice/schemify-microservice/example/application/mappers/example.mapper'
+import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+import { GrpcMethod } from '@nestjs/microservices'
 
 @Controller()
-@example.ExampleServiceControllerMethods()
 export class CreateExampleGrpcController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -54,6 +54,7 @@ export class CreateExampleGrpcController {
    * @param request DTO gRPC generado desde `.proto`
    * @returns `example.Example` (respuesta serializada)
    */
+  @GrpcMethod(example.EXAMPLE_SERVICE_NAME, 'createExample')
   async createExample(
     request: example.CreateExampleDto
   ): Promise<example.Example> {

@@ -19,10 +19,10 @@ import { QueryBus } from '@nestjs/cqrs'
 import { example } from '@app/proto'
 
 import { GetExampleByIdQuery } from '@microservice/schemify-microservice/example/application/queries'
-import { ExampleMapper } from '@microservice/schemify-microservice/example/application/mappers/example.mapper'
+import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+import { GrpcMethod } from '@nestjs/microservices'
 
-@Controller()
-@example.ExampleServiceControllerMethods()
+@Controller('ExampleService')
 export class GetExampleByIdGrpcController {
   constructor(
     private readonly queryBus: QueryBus,
@@ -52,6 +52,8 @@ export class GetExampleByIdGrpcController {
    * @param request DTO generado desde el contrato gRPC (`.proto`)
    * @returns example.Example (objeto compatible con el contrato Protobuf)
    */
+
+  @GrpcMethod(example.EXAMPLE_SERVICE_NAME, 'getExampleById')
   async getExampleById(
     request: example.GetExampleByIdDto
   ): Promise<example.Example> {

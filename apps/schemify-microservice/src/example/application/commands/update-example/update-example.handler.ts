@@ -26,23 +26,20 @@
  */
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { Inject, NotFoundException } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 
 import { UpdateExampleCommand } from './update-example.command'
 
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 
 import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-read-repository'
-import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-write-repository'
+import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-write.repository'
 @CommandHandler(UpdateExampleCommand)
 export class UpdateExampleHandler
   implements ICommandHandler<UpdateExampleCommand>
 {
   constructor(
-    @Inject('ExampleReadRepository')
     private readonly readRepository: ExampleReadRepository,
-
-    @Inject('ExampleWriteRepository')
     private readonly writeRepository: ExampleWriteRepository
   ) {}
 

@@ -19,22 +19,22 @@
 
 import { ExampleEntity } from '../entities/example.entity'
 
-export interface ExampleWriteRepository {
+export abstract class ExampleWriteRepository {
   /**
    * Persiste un nuevo agregado en la base de datos.
    * @param entity Agregado a crear
    */
-  create(entity: ExampleEntity): Promise<void>
+  abstract create(entity: ExampleEntity): Promise<void>
 
   /**
    * Actualiza los datos del agregado persistido.
    * @param entity Agregado modificado
    */
-  update(entity: ExampleEntity): Promise<void>
+  abstract update(entity: ExampleEntity): Promise<void>
 
   /**
    * Elimina el agregado por ID (soft-delete o hard-delete, según implementación).
    * @param id ID del agregado a eliminar
    */
-  delete(id: string): Promise<void>
+  abstract delete(id: string): Promise<void>
 }

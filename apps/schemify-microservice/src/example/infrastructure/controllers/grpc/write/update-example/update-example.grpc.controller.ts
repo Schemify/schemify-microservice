@@ -20,10 +20,10 @@ import { CommandBus } from '@nestjs/cqrs'
 import { example } from '@app/proto'
 
 import { UpdateExampleCommand } from '@microservice/schemify-microservice/example/application/commands/'
-import { ExampleMapper } from '@microservice/schemify-microservice/example/application/mappers/example.mapper'
+import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+import { GrpcMethod } from '@nestjs/microservices'
 
 @Controller()
-@example.ExampleServiceControllerMethods()
 export class UpdateExampleGrpcController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -51,6 +51,8 @@ export class UpdateExampleGrpcController {
    * @param request DTO gRPC con los datos actualizables (`UpdateExampleDto`)
    * @returns `example.Example` (respuesta actualizada)
    */
+
+  @GrpcMethod(example.EXAMPLE_SERVICE_NAME, 'updateExample')
   async updateExample(
     request: example.UpdateExampleDto
   ): Promise<example.Example> {

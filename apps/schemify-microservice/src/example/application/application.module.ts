@@ -20,17 +20,20 @@ import { CommandHandlers } from './commands'
 import { QueryHandlers } from './queries'
 import { EventHandlers } from './events'
 
-// 📦 Mappers
-import { ExampleMapper } from './mappers/example.mapper'
+import { RepositoriesModule } from '../infrastructure/repositories/repositories.module'
+
+import { SharedModule } from '@microservice/schemify-microservice/libs/shared/shared.module'
+import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
 
 @Module({
-  imports: [CqrsModule],
+  imports: [CqrsModule, RepositoriesModule, SharedModule],
   providers: [
     ...CommandHandlers,
     ...QueryHandlers,
     ...EventHandlers,
     ExampleMapper
   ],
-  exports: [ExampleMapper]
+
+  exports: [CqrsModule]
 })
 export class ApplicationModule {}

@@ -21,7 +21,7 @@ export type ExampleUpdateProps = {
 export interface ExamplePrimitives {
   id: string
   name: string
-  description?: string
+  description: string | null | undefined
   createdAt: Date
   updatedAt?: Date
 }

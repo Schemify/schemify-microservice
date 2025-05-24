@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "example.ExampleService.GetExamplesByCursor"
+    "methodFqn": "example.ExampleService.getExamplesByCursor"
   },
   "requests": [
     {
-      "location": "GetExamplesByCursor-request.json"
+      "location": "getExamplesByCursor-request.json"
     }
   ],
   "operationType": "unary",

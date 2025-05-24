@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from '@microservice/schemify-microservice/example/infrastructure/repositories/prisma/config/prisma.service'
 
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
-import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-write-repository'
+import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-write.repository'
 
 @Injectable()
 export class ExampleWritePrismaRepository implements ExampleWriteRepository {

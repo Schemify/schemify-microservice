@@ -14,25 +14,25 @@
 
 import { ExampleEntity } from '../entities/example.entity'
 
-export interface ExampleReadRepository {
+export abstract class ExampleReadRepository {
   /**
    * Busca un Example por su ID.
    * @param id ID del agregado
    * @returns El agregado si existe, o `null` si no se encuentra.
    */
-  findById(id: string): Promise<ExampleEntity | null>
+  abstract findById(id: string): Promise<ExampleEntity | null>
 
   /**
    * Retorna todos los registros disponibles.
    * 🚨 Solo usar si el volumen de datos lo permite.
    */
-  findAll(): Promise<ExampleEntity[]>
+  abstract findAll(): Promise<ExampleEntity[]>
 
   /**
    * Retorna una lista paginada por cursor.
    * Útil para cargas masivas o scroll infinito.
    */
-  findWithCursor(
+  abstract findWithCursor(
     afterId: string,
     limit: number
   ): Promise<{

@@ -85,6 +85,13 @@ export class ExampleMapper {
    * @returns Instancia válida de `ExampleEntity`
    */
   fromPrimitives(input: ExamplePrimitives): ExampleEntity {
-    return ExampleEntity.fromPrimitives(input)
+    return new ExampleEntity(input.id, {
+      name: NameValueObject.create(input.name),
+      description: DescriptionValueObject.create(
+        input.description ?? undefined
+      ),
+      createdAt: input.createdAt,
+      updatedAt: input.updatedAt ?? input.createdAt
+    })
   }
 }

@@ -1,63 +1,48 @@
 /**
  * GetExampleByIdHandler
  * -----------------------------------------------------------------------------
- * Handler para la query `GetExampleByIdQuery`.
+ * Handler que responde a la query `GetExampleByIdQuery`.
  *
- * Se encarga de:
- * - Buscar un `ExampleEntity` por su ID
- * - Lanzar excepción si no existe
- * - Convertir la entidad a un DTO/proto antes de devolverla
+ * 🔹 Esta clase forma parte de la **capa de aplicación**, implementando el patrón CQRS.
+ * 🔹 Su responsabilidad es recuperar un agregado `ExampleEntity` por su ID.
  *
- * Esta clase forma parte de la **capa de aplicación**, y sigue el patrón **CQRS**.
+ * ✨ Responsabilidad:
+ *  - Acceder al repositorio de solo lectura (`ExampleReadRepository`)
+ *  - Devolver una instancia completa del dominio (`ExampleEntity`)
+ *  - En caso de no encontrar el agregado, retornar `null`
  *
- * Flujo de ejecución:
- * 1. Client envía `GetExampleByIdQuery` con el `id`
- * 2. QueryBus ejecuta este Handler
- * 3. El Handler accede al `ExampleReadRepository`
- * 4. Si existe, transforma la entidad en DTO usando `ExampleMapper`
- * 5. Devuelve el DTO (ej: `example.Example`) a la capa de transporte
+ * 🚫 Este handler NO:
+ *  - Mapea la entidad a DTOs/Protobuf
+ *  - Define detalles de presentación o transporte
  *
- * Dependencias:
- * - `ExampleReadRepository`: acceso de solo lectura al agregado
- * - `ExampleMapper`: transforma entidad a DTO (proto)
+ * 🧠 Justificación arquitectónica:
+ *  - Mantiene la lógica de negocio y el acceso desacoplado de la infraestructura
+ *  - Permite que los adaptadores (gRPC/REST/etc.) manejen la presentación y errores
+ *  - Facilita testing y mantiene el dominio puro
+ *
+ * 🔌 Dependencias:
+ *  - `ExampleReadRepository`: puerto de salida para acceso de solo lectura
  */
 
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { Inject, NotFoundException } from '@nestjs/common'
-
-import { example } from '@app/proto'
-
 import { GetExampleByIdQuery } from './get-example-by-id.query'
 
 import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-read-repository'
-import { ExampleMapper } from '@microservice/schemify-microservice/example/application/mappers/example.mapper'
+import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 
 @QueryHandler(GetExampleByIdQuery)
 export class GetExampleByIdHandler
   implements IQueryHandler<GetExampleByIdQuery>
 {
-  constructor(
-    @Inject('ExampleReadRepository')
-    private readonly readRepository: ExampleReadRepository,
-    private readonly mapper: ExampleMapper
-  ) {}
+  constructor(private readonly readRepository: ExampleReadRepository) {}
 
   /**
-   * Ejecuta la query para obtener un Example por ID.
+   * Ejecuta la query `GetExampleByIdQuery`.
    *
-   * @param query Query con el ID solicitado
-   * @returns Objeto DTO/proto (`example.Example`) si se encuentra
-   * @throws NotFoundException si el ID no existe
+   * @param query Objeto con el ID del agregado a buscar
+   * @returns `ExampleEntity` si se encuentra, o `null` si no existe
    */
-  async execute(query: GetExampleByIdQuery): Promise<example.Example> {
-    const entity = await this.readRepository.findById(query.payload.id)
-
-    if (!entity) {
-      throw new NotFoundException(
-        `Example with id ${query.payload.id} not found`
-      )
-    }
-
-    return this.mapper.entityToProto(entity)
+  async execute(query: GetExampleByIdQuery): Promise<ExampleEntity | null> {
+    return this.readRepository.findById(query.payload.id)
   }
 }

@@ -81,19 +81,6 @@ export class ExampleEntity extends AggregateRoot {
   }
 
   /**
-   * Método usado para reconstruir una entidad desde datos planos (ej: DB).
-   * No dispara eventos.
-   */
-  static fromPrimitives(input: ExamplePrimitives): ExampleEntity {
-    return new ExampleEntity(input.id, {
-      name: NameValueObject.create(input.name),
-      description: DescriptionValueObject.create(input.description),
-      createdAt: input.createdAt,
-      updatedAt: input.updatedAt ?? input.createdAt
-    })
-  }
-
-  /**
    * Devuelve una representación plana del estado de la entidad.
    * Útil para persistencia o serialización.
    */

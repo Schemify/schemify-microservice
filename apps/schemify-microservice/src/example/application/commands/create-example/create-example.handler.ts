@@ -24,22 +24,18 @@
  */
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { Inject } from '@nestjs/common'
 
 import { CreateExampleCommand } from './create-example.command'
 
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 
-import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-write-repository'
+import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-write.repository'
 
 @CommandHandler(CreateExampleCommand)
 export class CreateExampleHandler
   implements ICommandHandler<CreateExampleCommand>
 {
-  constructor(
-    @Inject('ExampleWriteRepository')
-    private readonly writeRepository: ExampleWriteRepository
-  ) {}
+  constructor(private readonly writeRepository: ExampleWriteRepository) {}
 
   /**
    * Ejecuta el comando creando un nuevo agregado en el dominio.

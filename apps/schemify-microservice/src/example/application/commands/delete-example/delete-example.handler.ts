@@ -21,11 +21,11 @@
  */
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { Inject, NotFoundException } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 
 import { DeleteExampleCommand } from './delete-example.command'
 
-import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-write-repository'
+import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-write.repository'
 import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-read-repository'
 
 @CommandHandler(DeleteExampleCommand)
@@ -33,9 +33,7 @@ export class DeleteExampleHandler
   implements ICommandHandler<DeleteExampleCommand>
 {
   constructor(
-    @Inject('ExampleWriteRepository')
     private readonly writeRepository: ExampleWriteRepository,
-    @Inject('ExampleReadRepository')
     private readonly readRepository: ExampleReadRepository
   ) {}
 

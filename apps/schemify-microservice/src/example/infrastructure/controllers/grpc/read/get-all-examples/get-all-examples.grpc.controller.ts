@@ -27,10 +27,10 @@ import { example } from '@app/proto'
 
 import { GetAllExamplesQuery } from '@microservice/schemify-microservice/example/application/queries'
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
-import { ExampleMapper } from '@microservice/schemify-microservice/example/application/mappers/example.mapper'
+import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+import { GrpcMethod } from '@nestjs/microservices'
 
 @Controller()
-@example.ExampleServiceControllerMethods()
 export class GetAllExamplesGrpcController {
   constructor(
     private readonly queryBus: QueryBus,
@@ -48,6 +48,7 @@ export class GetAllExamplesGrpcController {
    *
    * @returns Protobuf `example.Examples` con la lista de ejemplos
    */
+  @GrpcMethod('ExampleService', 'getAllExamples')
   async getAllExamples(): Promise<example.Examples> {
     const entities = await this.queryBus.execute<
       GetAllExamplesQuery,

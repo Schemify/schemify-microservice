@@ -4,21 +4,18 @@ import { PrismaService } from '@microservice/schemify-microservice/example/infra
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/repositories/example-read-repository'
 
+import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+
 @Injectable()
 export class ExampleReadPrismaRepository implements ExampleReadRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly mapper: ExampleMapper
+  ) {}
 
   async findAll(): Promise<ExampleEntity[]> {
     const results = await this.prisma.example.findMany()
-    return results.map((result) =>
-      ExampleEntity.fromPrimitives({
-        id: result.id,
-        name: result.name,
-        description: result.description ?? undefined,
-        createdAt: result.createdAt,
-        updatedAt: result.updatedAt
-      })
-    )
+    return results.map((result) => this.mapper.fromPrimitives(result))
   }
 
   async findById(id: string): Promise<ExampleEntity | null> {
@@ -26,13 +23,7 @@ export class ExampleReadPrismaRepository implements ExampleReadRepository {
 
     if (!result) return null
 
-    return ExampleEntity.fromPrimitives({
-      id: result.id,
-      name: result.name,
-      description: result.description ?? undefined,
-      createdAt: result.createdAt,
-      updatedAt: result.updatedAt
-    })
+    return this.mapper.fromPrimitives(result)
   }
 
   async findWithCursor(afterId: string, limit: number) {
@@ -48,15 +39,7 @@ export class ExampleReadPrismaRepository implements ExampleReadRepository {
     const last = sliced.at(-1)
 
     return {
-      items: sliced.map((r) =>
-        ExampleEntity.fromPrimitives({
-          id: r.id,
-          name: r.name,
-          description: r.description ?? undefined,
-          createdAt: r.createdAt,
-          updatedAt: r.updatedAt
-        })
-      ),
+      items: sliced.map((r) => this.mapper.fromPrimitives(r)),
       nextCursor: last?.id ?? null,
       hasMore
     }
