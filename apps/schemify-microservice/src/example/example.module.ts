@@ -16,7 +16,7 @@ import { ApplicationModule } from './application/application.module'
 import { InfrastructureModule } from './infrastructure/infrastructure.module'
 
 // Controladores (HTTP/gRPC/etc.)
-import { Controllers } from './infrastructure/controllers'
+import { Controllers } from '@microservice/schemify-microservice/example/infrastructure/adapters/inbounds/controllers'
 
 import { SharedModule } from '@microservice/schemify-microservice/libs/shared/shared.module'
 import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'

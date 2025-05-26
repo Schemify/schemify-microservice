@@ -16,11 +16,11 @@ import { Module } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 
 // 📦 CQRS Handlers
-import { CommandHandlers } from './commands'
-import { QueryHandlers } from './queries'
-import { EventHandlers } from './events'
+import { CommandHandlers } from './ports/inbounds/commands'
+import { QueryHandlers } from './ports/inbounds/queries'
+import { EventHandlers } from './ports/inbounds/events'
 
-import { RepositoriesModule } from '../infrastructure/repositories/repositories.module'
+import { RepositoriesModule } from '@microservice/schemify-microservice/example/infrastructure/adapters/outbounds/repositories/repositories.module'
 
 import { SharedModule } from '@microservice/schemify-microservice/libs/shared/shared.module'
 import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'

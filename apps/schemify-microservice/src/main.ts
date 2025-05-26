@@ -6,9 +6,9 @@ import { Logger } from '@nestjs/common'
 import { example } from '@app/proto'
 import { join } from 'path'
 
-import { GrpcLoggingInterceptor } from './example/infrastructure/interceptors/grpc-logging.interceptor'
+import { GrpcLoggingInterceptor } from './example/infrastructure/common/interceptors/grpc-logging.interceptor'
 
-import { kafkaConsumerOptions } from './example/infrastructure/messaging/kafka/config/kafka-factory.config'
+import { kafkaConsumerOptions } from './example/infrastructure/adapters/outbounds/messaging/kafka/config/kafka-factory.config'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)

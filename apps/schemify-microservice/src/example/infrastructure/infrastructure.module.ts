@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { KafkaModule } from './messaging/kafka/kafka.module'
+import { KafkaModule } from './adapters/outbounds/messaging/kafka/kafka.module'
 
 @Module({
   imports: [KafkaModule],
