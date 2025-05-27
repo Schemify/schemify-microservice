@@ -15,25 +15,15 @@
 import { Module } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 
-// 📦 CQRS Handlers
-import { CommandHandlers } from './ports/inbounds/commands'
-import { QueryHandlers } from './ports/inbounds/queries'
-import { EventHandlers } from './ports/inbounds/events'
-
-import { RepositoriesModule } from '@microservice/schemify-microservice/example/infrastructure/adapters/outbounds/repositories/repositories.module'
+import { PortsModule } from './ports/ports.module'
 
 import { SharedModule } from '@microservice/schemify-microservice/libs/shared/shared.module'
 import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
 
 @Module({
-  imports: [CqrsModule, RepositoriesModule, SharedModule],
-  providers: [
-    ...CommandHandlers,
-    ...QueryHandlers,
-    ...EventHandlers,
-    ExampleMapper
-  ],
+  imports: [CqrsModule, PortsModule, SharedModule],
+  providers: [ExampleMapper, PortsModule],
 
-  exports: [CqrsModule]
+  exports: [CqrsModule, PortsModule, ExampleMapper]
 })
 export class ApplicationModule {}

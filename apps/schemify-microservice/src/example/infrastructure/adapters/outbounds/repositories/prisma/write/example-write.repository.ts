@@ -8,10 +8,10 @@ import { ExampleEntity } from '@microservice/schemify-microservice/example/domai
 import { PrismaService } from '@microservice/schemify-microservice/example/infrastructure/adapters/outbounds/repositories/prisma/config/prisma.service'
 
 // ✅ Adaptador de salida (infraestructura)
-import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-write.repository'
+import { ExampleCommandRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-command.repository'
 
 @Injectable()
-export class ExampleWritePrismaRepository implements ExampleWriteRepository {
+export class ExampleWritePrismaRepository implements ExampleCommandRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(entity: ExampleEntity): Promise<void> {

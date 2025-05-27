@@ -14,10 +14,10 @@
  * 2. El `CommandBus` ejecuta este handler
  * 3. El handler consulta si el recurso existe
  * 4. Si no existe, lanza `NotFoundException`
- * 5. Si existe, ejecuta `writeRepository.delete(id)`
+ * 5. Si existe, ejecuta `commandRepository.delete(id)`
  *
  * Dependencias:
- * - `ExampleWriteRepository`: contrato de persistencia de escritura
+ * - `ExampleCommandRepository`: contrato de persistencia de escritura
  */
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
@@ -25,16 +25,16 @@ import { NotFoundException } from '@nestjs/common'
 
 import { DeleteExampleCommand } from './delete-example.command'
 
-import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-write.repository'
-import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-read-repository'
+import { ExampleCommandRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-command.repository'
+import { ExampleQueryRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-query-repository'
 
 @CommandHandler(DeleteExampleCommand)
 export class DeleteExampleHandler
   implements ICommandHandler<DeleteExampleCommand>
 {
   constructor(
-    private readonly writeRepository: ExampleWriteRepository,
-    private readonly readRepository: ExampleReadRepository
+    private readonly commandRepository: ExampleCommandRepository,
+    private readonly queryRepository: ExampleQueryRepository
   ) {}
 
   /**
@@ -44,12 +44,12 @@ export class DeleteExampleHandler
    * @throws NotFoundException si el recurso no existe
    */
   async execute(command: DeleteExampleCommand): Promise<void> {
-    const entity = await this.readRepository.findById(command.id)
+    const entity = await this.queryRepository.findById(command.id)
 
     if (!entity) {
       throw new NotFoundException(`Example with id ${command.id} not found`)
     }
 
-    await this.writeRepository.delete(command.id)
+    await this.commandRepository.delete(command.id)
   }
 }

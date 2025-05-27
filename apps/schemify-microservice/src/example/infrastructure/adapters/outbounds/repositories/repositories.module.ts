@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common'
 import { PrismaModule } from './prisma/prisma.module'
 
 // ✅ Puerto de salida (dominio)
-import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-write.repository'
-import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-read-repository'
+import { ExampleCommandRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-command.repository'
+import { ExampleQueryRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-query-repository'
 
 // ✅ Adaptadores de salida (infraestructura)
 import { ExampleWritePrismaRepository } from '@microservice/schemify-microservice/example/infrastructure/adapters/outbounds/repositories/prisma/write/example-write.repository'
@@ -17,14 +17,14 @@ import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/m
   providers: [
     ExampleMapper,
     {
-      provide: ExampleWriteRepository,
+      provide: ExampleCommandRepository,
       useClass: ExampleWritePrismaRepository
     },
     {
-      provide: ExampleReadRepository,
+      provide: ExampleQueryRepository,
       useClass: ExampleReadPrismaRepository
     }
   ],
-  exports: [ExampleWriteRepository, ExampleReadRepository]
+  exports: [ExampleCommandRepository, ExampleQueryRepository]
 })
 export class RepositoriesModule {}

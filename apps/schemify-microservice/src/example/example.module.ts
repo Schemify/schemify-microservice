@@ -15,15 +15,12 @@ import { Module } from '@nestjs/common'
 import { ApplicationModule } from './application/application.module'
 import { InfrastructureModule } from './infrastructure/infrastructure.module'
 
-// Controladores (HTTP/gRPC/etc.)
-import { Controllers } from '@microservice/schemify-microservice/example/infrastructure/adapters/inbounds/controllers'
-
 import { SharedModule } from '@microservice/schemify-microservice/libs/shared/shared.module'
-import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
 
 @Module({
   imports: [ApplicationModule, InfrastructureModule, SharedModule],
-  providers: [ExampleMapper],
-  controllers: [...Controllers]
+
+  controllers: [],
+  exports: [ApplicationModule, InfrastructureModule, SharedModule]
 })
 export class ExampleModule {}

@@ -1,5 +1,5 @@
 /**
- * 📌 gRPC Write Controllers - CQRS (Commands)
+ * 📌 gRPC Command Controllers - CQRS (Commands)
  * -----------------------------------------------------------------------------
  * Este archivo agrupa todos los controladores gRPC responsables de operaciones
  * de escritura (`Commands`) para el agregado `Example`.
@@ -16,10 +16,10 @@
  * 📦 Exportación centralizada para facilitar su inclusión:
  *
  * ```ts
- * import { ExampleGrpcWriteControllers } from './controllers/grpc/write'
+ * import { GrpcCommandControllers } from './controllers/grpc/Command'
  *
  * @Module({
- *   controllers: [...ExampleGrpcWriteControllers]
+ *   controllers: [...GrpcCommandControllers]
  * })
  * export class ExampleModule {}
  * ```
@@ -33,7 +33,7 @@ import { DeleteExampleGrpcController } from './delete-example/delete-example.grp
 /**
  * 📦 Conjunto de controladores gRPC de escritura para CQRS Commands
  */
-export const ExampleGrpcWriteControllers = [
+export const GrpcCommandControllers = [
   CreateExampleGrpcController,
   UpdateExampleGrpcController,
   DeleteExampleGrpcController

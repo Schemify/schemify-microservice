@@ -20,20 +20,20 @@
  *  - Compatible con múltiples adaptadores (REST, GraphQL, gRPC)
  *
  * 🔌 Dependencias:
- *  - `ExampleReadRepository`: puerto de salida del dominio para operaciones de lectura
+ *  - `ExampleQueryRepository`: puerto de salida del dominio para operaciones de lectura
  */
 
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { GetExamplesByCursorQuery } from './get-examples-by-cursor.query'
 
-import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-read-repository'
+import { ExampleQueryRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-query-repository'
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 
 @QueryHandler(GetExamplesByCursorQuery)
 export class GetExamplesByCursorHandler
   implements IQueryHandler<GetExamplesByCursorQuery>
 {
-  constructor(private readonly readRepository: ExampleReadRepository) {}
+  constructor(private readonly queryRepository: ExampleQueryRepository) {}
 
   /**
    * Ejecuta la query con paginación basada en cursor.
@@ -51,7 +51,7 @@ export class GetExamplesByCursorHandler
   }> {
     const { afterId, limit } = query.payload
 
-    const result = await this.readRepository.findWithCursor(afterId, limit)
+    const result = await this.queryRepository.findWithCursor(afterId, limit)
 
     return {
       items: result.items,

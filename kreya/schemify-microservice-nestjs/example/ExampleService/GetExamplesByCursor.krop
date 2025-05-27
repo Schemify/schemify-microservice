@@ -4,7 +4,7 @@
   },
   "requests": [
     {
-      "location": "getExamplesByCursor-request.json"
+      "location": "GetExamplesByCursor-request.json"
     }
   ],
   "operationType": "unary",

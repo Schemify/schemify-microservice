@@ -1,5 +1,5 @@
 /**
- * 📌 gRPC Read Controllers - CQRS (Queries)
+ * 📌 gRPC Query Controllers - CQRS (Queries)
  * -----------------------------------------------------------------------------
  * Este archivo agrupa todos los controladores gRPC responsables de operaciones
  * de lectura (`Query`) para el agregado `Example`.
@@ -15,10 +15,10 @@
  * Uso típico:
  *
  * ```ts
- * import { ExampleGrpcReadControllers } from './controllers/grpc/read'
+ * import { GrpcQueryControllers } from './controllers/grpc/Query'
  *
  * @Module({
- *   controllers: [...ExampleGrpcReadControllers]
+ *   controllers: [...GrpcQueryControllers]
  * })
  * export class ExampleModule {}
  * ```
@@ -32,7 +32,7 @@ import { GetExamplesByCursorGrpcController } from './get-examples-by-cursor/get-
 /**
  * 📦 Array de controladores gRPC para Queries (Lectura)
  */
-export const ExampleGrpcReadControllers = [
+export const GrpcQueryControllers = [
   GetAllExamplesGrpcController,
   GetExampleByIdGrpcController,
   GetExamplesByCursorGrpcController

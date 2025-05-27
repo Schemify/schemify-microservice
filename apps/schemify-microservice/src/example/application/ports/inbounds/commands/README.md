@@ -94,14 +94,14 @@ import { UserWriteRepository } from '@/domain/repositories/user.write-repository
 export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   constructor(
     @Inject('UserReadRepository')
-    private readonly readRepository: UserReadRepository,
+    private readonly queryRepository: UserReadRepository,
 
     @Inject('UserWriteRepository')
-    private readonly writeRepository: UserWriteRepository
+    private readonly commandRepository: UserWriteRepository
   ) {}
 
   async execute(command: UpdateUserCommand): Promise<void> {
-    const user = await this.readRepository.findById(command.id)
+    const user = await this.queryRepository.findById(command.id)
 
     if (!user) {
       throw new NotFoundException(`User with id ${command.id} not found`)
@@ -109,7 +109,7 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
 
     user.update({ name: command.name, email: command.email })
 
-    await this.writeRepository.update(user)
+    await this.commandRepository.update(user)
     user.commit()
   }
 }

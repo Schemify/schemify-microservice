@@ -21,8 +21,8 @@
  * 7. Ejecuta `entity.commit()` para publicar los eventos
  *
  * Dependencias:
- * - `ExampleReadRepository`: para verificar existencia (solo lectura)
- * - `ExampleWriteRepository`: para persistir el resultado modificado
+ * - `ExampleQueryRepository`: para verificar existencia (solo lectura)
+ * - `ExampleCommandRepository`: para persistir el resultado modificado
  */
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
@@ -32,15 +32,15 @@ import { UpdateExampleCommand } from './update-example.command'
 
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 
-import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-read-repository'
-import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-write.repository'
+import { ExampleQueryRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-query-repository'
+import { ExampleCommandRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-command.repository'
 @CommandHandler(UpdateExampleCommand)
 export class UpdateExampleHandler
   implements ICommandHandler<UpdateExampleCommand>
 {
   constructor(
-    private readonly readRepository: ExampleReadRepository,
-    private readonly writeRepository: ExampleWriteRepository
+    private readonly queryRepository: ExampleQueryRepository,
+    private readonly commandRepository: ExampleCommandRepository
   ) {}
 
   /**
@@ -51,7 +51,7 @@ export class UpdateExampleHandler
    * @throws NotFoundException si el recurso no existe
    */
   async execute(command: UpdateExampleCommand): Promise<ExampleEntity> {
-    const example = await this.readRepository.findById(command.id)
+    const example = await this.queryRepository.findById(command.id)
 
     if (!example) {
       throw new NotFoundException(`Example with id ${command.id} not found`)
@@ -63,7 +63,7 @@ export class UpdateExampleHandler
       description: command.description
     })
 
-    await this.writeRepository.update(example)
+    await this.commandRepository.update(example)
     example.commit()
 
     return example

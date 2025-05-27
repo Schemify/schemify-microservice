@@ -1,5 +1,5 @@
 /**
- * ExampleWriteRepository
+ * ExampleCommandRepository
  * -----------------------------------------------------------------------------
  * Interfaz que define el contrato de persistencia **de escritura** para `ExampleEntity`.
  * Es parte del patrón de arquitectura **Hexagonal (puerto de salida)**.
@@ -19,7 +19,7 @@
 
 import { ExampleEntity } from '../../entities/example.entity'
 
-export abstract class ExampleWriteRepository {
+export abstract class ExampleCommandRepository {
   /**
    * Persiste un nuevo agregado en la base de datos.
    * @param entity Agregado a crear

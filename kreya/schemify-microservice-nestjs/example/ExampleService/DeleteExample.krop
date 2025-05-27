@@ -4,7 +4,7 @@
   },
   "requests": [
     {
-      "location": "deleteExample-request.json"
+      "location": "DeleteExample-request.json"
     }
   ],
   "operationType": "unary",

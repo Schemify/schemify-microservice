@@ -8,12 +8,12 @@ import { ExampleEntity } from '@microservice/schemify-microservice/example/domai
 import { PrismaService } from '@microservice/schemify-microservice/example/infrastructure/adapters/outbounds/repositories/prisma/config/prisma.service'
 
 // ✅ Puerto de salida (dominio)
-import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-read-repository'
+import { ExampleQueryRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-query-repository'
 
 import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
 
 @Injectable()
-export class ExampleReadPrismaRepository implements ExampleReadRepository {
+export class ExampleReadPrismaRepository implements ExampleQueryRepository {
   constructor(
     private readonly prisma: PrismaService,
     private readonly mapper: ExampleMapper

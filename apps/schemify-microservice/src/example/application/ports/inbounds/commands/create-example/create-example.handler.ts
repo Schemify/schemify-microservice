@@ -15,12 +15,12 @@
  * 1. El cliente o servicio envía `CreateExampleCommand` al `CommandBus`
  * 2. NestJS ejecuta este handler
  * 3. Se crea un nuevo `ExampleEntity` con sus reglas de dominio
- * 4. El handler invoca `writeRepository.create(...)`
+ * 4. El handler invoca `commandRepository.create(...)`
  * 5. Se aplica el evento de creación (`entity.commit()`)
  * 6. Se retorna la entidad (puede ser transformada antes de exponerse)
  *
  * Dependencias:
- * - `ExampleWriteRepository`: capa de persistencia orientada a escritura
+ * - `ExampleCommandRepository`: capa de persistencia orientada a escritura
  */
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
@@ -29,13 +29,13 @@ import { CreateExampleCommand } from './create-example.command'
 
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 
-import { ExampleWriteRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-write.repository'
+import { ExampleCommandRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-command.repository'
 
 @CommandHandler(CreateExampleCommand)
 export class CreateExampleHandler
   implements ICommandHandler<CreateExampleCommand>
 {
-  constructor(private readonly writeRepository: ExampleWriteRepository) {}
+  constructor(private readonly commandRepository: ExampleCommandRepository) {}
 
   /**
    * Ejecuta el comando creando un nuevo agregado en el dominio.
@@ -49,7 +49,7 @@ export class CreateExampleHandler
       description: command.description
     })
 
-    await this.writeRepository.create(entity)
+    await this.commandRepository.create(entity)
     entity.commit()
 
     return entity

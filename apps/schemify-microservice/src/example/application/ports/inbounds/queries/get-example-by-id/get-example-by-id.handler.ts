@@ -7,7 +7,7 @@
  * 🔹 Su responsabilidad es recuperar un agregado `ExampleEntity` por su ID.
  *
  * ✨ Responsabilidad:
- *  - Acceder al repositorio de solo lectura (`ExampleReadRepository`)
+ *  - Acceder al repositorio de solo lectura (`ExampleQueryRepository`)
  *  - Devolver una instancia completa del dominio (`ExampleEntity`)
  *  - En caso de no encontrar el agregado, retornar `null`
  *
@@ -21,20 +21,20 @@
  *  - Facilita testing y mantiene el dominio puro
  *
  * 🔌 Dependencias:
- *  - `ExampleReadRepository`: puerto de salida para acceso de solo lectura
+ *  - `ExampleQueryRepository`: puerto de salida para acceso de solo lectura
  */
 
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { GetExampleByIdQuery } from './get-example-by-id.query'
 
-import { ExampleReadRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-read-repository'
+import { ExampleQueryRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-query-repository'
 import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
 
 @QueryHandler(GetExampleByIdQuery)
 export class GetExampleByIdHandler
   implements IQueryHandler<GetExampleByIdQuery>
 {
-  constructor(private readonly readRepository: ExampleReadRepository) {}
+  constructor(private readonly queryRepository: ExampleQueryRepository) {}
 
   /**
    * Ejecuta la query `GetExampleByIdQuery`.
@@ -43,6 +43,6 @@ export class GetExampleByIdHandler
    * @returns `ExampleEntity` si se encuentra, o `null` si no existe
    */
   async execute(query: GetExampleByIdQuery): Promise<ExampleEntity | null> {
-    return this.readRepository.findById(query.payload.id)
+    return this.queryRepository.findById(query.payload.id)
   }
 }

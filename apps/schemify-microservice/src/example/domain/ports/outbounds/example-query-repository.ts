@@ -1,5 +1,5 @@
 /**
- * ExampleReadRepository
+ * ExampleQueryRepository
  * -----------------------------------------------------------------------------
  * Interfaz que define el contrato de acceso **de solo lectura** al agregado `ExampleEntity`.
  * Forma parte del patrón de arquitectura **Hexagonal / Ports and Adapters**.
@@ -14,7 +14,7 @@
 
 import { ExampleEntity } from '../../entities/example.entity'
 
-export abstract class ExampleReadRepository {
+export abstract class ExampleQueryRepository {
   /**
    * Busca un Example por su ID.
    * @param id ID del agregado

@@ -1,4 +1,3 @@
-/* eslint-disable @darraghor/nestjs-typed/injectable-should-be-provided */
 import {
   Inject,
   Injectable,
@@ -6,6 +5,8 @@ import {
   OnModuleInit
 } from '@nestjs/common'
 import { ClientKafka } from '@nestjs/microservices'
+
+import { firstValueFrom } from 'rxjs'
 
 @Injectable()
 export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
@@ -22,6 +23,6 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
   }
 
   async emit(topic: string, message: Record<string, any>) {
-    await this.kafkaClient.emit(topic, message).toPromise()
+    await firstValueFrom(this.kafkaClient.emit(topic, message))
   }
 }

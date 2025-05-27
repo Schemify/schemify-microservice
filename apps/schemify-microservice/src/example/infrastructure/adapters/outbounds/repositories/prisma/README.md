@@ -16,8 +16,8 @@ Este directorio contiene la integración de **Prisma ORM** dentro del microservi
 ├── prisma.module.ts             → Módulo NestJS que expone el servicio Prisma
 ├── prisma.service.ts            → Cliente Prisma extendido y gestionado por NestJS
 └── 📁 repositories
-    ├── 📁 read/                  → Implementaciones del `ExampleReadRepository`
-    └── 📁 write/                 → Implementaciones del `ExampleWriteRepository`
+    ├── 📁 read/                  → Implementaciones del `ExampleQueryRepository`
+    └── 📁 write/                 → Implementaciones del `ExampleCommandRepository`
 ```
 
 ## ⚙️ prisma.service.ts
@@ -71,7 +71,7 @@ Contiene implementaciones específicas para consultas de solo lectura:
 * `find-example-by-id.prisma.repository.ts`
 * `find-examples-by-cursor.prisma.repository.ts`
 
-Cada clase implementa `ExampleReadRepository`, y solo los métodos requeridos para ese caso de uso (seguimos **CQRS**).
+Cada clase implementa `ExampleQueryRepository`, y solo los métodos requeridos para ese caso de uso (seguimos **CQRS**).
 
 ### 📁 `repositories/write/`
 
@@ -81,7 +81,7 @@ Contiene implementaciones de escritura:
 * `update-example.prisma.repository.ts`
 * `delete-example.prisma.repository.ts`
 
-Estas clases implementan `ExampleWriteRepository`.
+Estas clases implementan `ExampleCommandRepository`.
 
 ## ✅ ¿Por qué dividir en read/write?
 
@@ -98,8 +98,8 @@ En la capa de aplicación (commands y queries):
 @QueryHandler(GetAllExamplesQuery)
 export class GetAllExamplesHandler {
   constructor(
-    @Inject('ExampleReadRepository')
-    private readonly repository: ExampleReadRepository
+    @Inject('ExampleQueryRepository')
+    private readonly repository: ExampleQueryRepository
   ) {}
 }
 ```
@@ -130,8 +130,8 @@ export class GetAllExamplesHandler {
 1. Configura `prisma.service.ts`
 2. Registra el módulo en `InfrastructureModule`
 3. Implementa tus `Read` y `Write` repositories por separado
-4. Usa `@Inject('ExampleReadRepository')` desde queries
-5. Usa `@Inject('ExampleWriteRepository')` desde commands
+4. Usa `@Inject('ExampleQueryRepository')` desde queries
+5. Usa `@Inject('ExampleCommandRepository')` desde commands
 
 ---
 

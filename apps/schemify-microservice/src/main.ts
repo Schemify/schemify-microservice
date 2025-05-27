@@ -1,31 +1,35 @@
 import { NestFactory } from '@nestjs/core'
-import { Transport, MicroserviceOptions } from '@nestjs/microservices'
+// import { Transport, MicroserviceOptions } from '@nestjs/microservices'
 import { AppModule } from './app.module'
 import { Logger } from '@nestjs/common'
 
-import { example } from '@app/proto'
-import { join } from 'path'
+// import { join } from 'path'
 
-import { GrpcLoggingInterceptor } from './example/infrastructure/common/interceptors/grpc-logging.interceptor'
+// import { example } from '@app/proto'
 
-import { kafkaConsumerOptions } from './example/infrastructure/adapters/outbounds/messaging/kafka/config/kafka-factory.config'
+import { GrpcLoggingInterceptor } from './example/infrastructure/shared/interceptors/grpc-logging.interceptor'
+
+import { GrpcServerModule } from './example/infrastructure/adapters/inbounds/grpc/grpc-server.module'
+import { KafkaConsumerModule } from './example/infrastructure/adapters/inbounds/messaging/kafka/kafka-consumer.module'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
   const logger = new Logger('SchemifyMicroservice')
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.GRPC,
-    options: {
-      package: example.EXAMPLE_PACKAGE_NAME,
-      protoPath: join(
-        __dirname,
-        '../proto/src/services/example_service/example.proto'
-      ),
-      url: '0.0.0.0:50051'
-    }
-  })
+  app.connectMicroservice(GrpcServerModule.transport())
+
+  // app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.GRPC,
+  //   options: {
+  //     package: example.EXAMPLE_PACKAGE_NAME,
+  //     protoPath: join(
+  //       __dirname,
+  //       '../proto/src/services/example_service/example.proto'
+  //     ),
+  //     url: '0.0.0.0:50051'
+  //   }
+  // })
 
   if (process.env.NODE_ENV === 'development') {
     app.useGlobalInterceptors(new GrpcLoggingInterceptor())
@@ -41,9 +45,22 @@ async function bootstrap() {
   // clientId	Identidad única del cliente	'auth-microservice'
   // consumer.groupId	Grupo de trabajo para consumir tópicos	'auth-service-group'
 
-  app.connectMicroservice<MicroserviceOptions>(
-    kafkaConsumerOptions('schemify-client', 'schemify-group', ['kafka1:9092'])
+  app.connectMicroservice(
+    KafkaConsumerModule.transport({
+      clientId: 'schemify-client',
+      groupId: 'schemify-group',
+      brokers: [process.env.KAFKA_BROKER || 'kafka1:9092']
+    })
   )
+
+  // app.connectMicroservice<MicroserviceOptions>(
+  //   kafkaConsumerOptions('schemify-client', 'schemify-group', ['kafka1:9092'])
+  // )
+  // app.connectMicroservice(
+  //   KafkaConsumerModule.transport('schemify-client', 'schemify-group', [
+  //     process.env.KAFKA_BROKER || 'kafka1:9092'
+  //   ])
+  // )
 
   // 4. Iniciar los microservicios
   await app.startAllMicroservices()
