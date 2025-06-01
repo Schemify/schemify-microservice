@@ -21,6 +21,9 @@ import {
   ExamplePrimitives
 } from '@example//example/domain/interfaces/example.domain.interface'
 
+import { CreateExampleDto } from 'libs/proto/generated/example'
+import { ExampleCreatedEvent } from '@example/example/domain/events/example-created.event'
+
 export class ExampleMapper {
   /**
    * Transforma un objeto recibido desde Protobuf a props del dominio.
@@ -93,5 +96,12 @@ export class ExampleMapper {
       createdAt: input.createdAt,
       updatedAt: input.updatedAt ?? input.createdAt
     })
+  }
+
+  fromEnvelope(input: ExampleCreatedEvent): CreateExampleDto {
+    return {
+      name: input.example.props.name.value,
+      description: input.example.props.description?.value
+    }
   }
 }
