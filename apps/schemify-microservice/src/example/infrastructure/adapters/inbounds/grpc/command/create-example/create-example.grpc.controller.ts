@@ -23,6 +23,7 @@ import { CreateExampleCommand } from '@example//example/application/ports/inboun
 
 import { ExampleMapper } from '@example//libs/shared/mappers/example.mapper'
 import { GrpcMethod } from '@nestjs/microservices'
+import { ExampleEntity } from '@example/example/domain/entities/example.entity'
 
 @Controller()
 export class CreateExampleGrpcController {
@@ -58,14 +59,12 @@ export class CreateExampleGrpcController {
   async createExample(
     request: example.CreateExampleDto
   ): Promise<example.Example> {
-    const props = this.mapper.protoToProps(request)
+    const command = new CreateExampleCommand(request.name, request.description)
 
-    const command = new CreateExampleCommand(
-      props.name.value,
-      props.description?.value
-    )
-
-    const entity = await this.commandBus.execute(command)
+    const entity = await this.commandBus.execute<
+      CreateExampleCommand, // comando que viaja
+      ExampleEntity // tipo que el handler devuelve
+    >(command)
 
     return this.mapper.entityToProto(entity)
   }

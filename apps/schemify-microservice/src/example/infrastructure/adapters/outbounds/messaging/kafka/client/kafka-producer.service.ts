@@ -1,28 +1,46 @@
 import {
-  Inject,
   Injectable,
-  OnModuleDestroy,
-  OnModuleInit
+  Inject,
+  OnModuleInit,
+  OnApplicationShutdown
 } from '@nestjs/common'
 import { ClientKafka } from '@nestjs/microservices'
+import { lastValueFrom } from 'rxjs'
 
-import { firstValueFrom } from 'rxjs'
-
+/**
+ * 🌐 KafkaProducerService
+ * ----------------------
+ * • Mantiene **una sola conexión** a Kafka por proceso
+ * • Reintenta lazy-connect en el primer `emit`
+ * • Cierra limpio al apagar la app
+ */
 @Injectable()
-export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
-  constructor(
-    @Inject('KAFKA_PRODUCER') private readonly kafkaClient: ClientKafka
-  ) {}
+export class KafkaProducerService
+  implements OnModuleInit, OnApplicationShutdown
+{
+  private ready = false
 
-  async onModuleInit() {
-    await this.kafkaClient.connect()
+  constructor(@Inject('KAFKA_PRODUCER') private readonly client: ClientKafka) {}
+
+  /** Conecta el producer (idempotente) */
+  async onModuleInit(): Promise<void> {
+    if (!this.ready) {
+      await this.client.connect()
+      this.ready = true
+    }
   }
 
-  async onModuleDestroy() {
-    await this.kafkaClient.close()
+  /**
+   * Publica un mensaje y devuelve el resultado del broker.
+   * Se asegura de que el producer esté conectado.
+   */
+  async emit(topic: string, payload: any): Promise<unknown> {
+    await this.onModuleInit()
+    return lastValueFrom(this.client.emit(topic, payload))
   }
 
-  async emit(topic: string, message: Record<string, any>) {
-    await firstValueFrom(this.kafkaClient.emit(topic, message))
+  /** Cierra la conexión al terminar la aplicación */
+  async onApplicationShutdown(): Promise<void> {
+    if (this.ready) await this.client.close()
   }
 }

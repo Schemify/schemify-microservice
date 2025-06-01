@@ -1,3 +1,4 @@
+/* eslint-disable @darraghor/nestjs-typed/injectable-should-be-provided */
 import { Injectable } from '@nestjs/common'
 
 import { KafkaProducerService } from '../client/kafka-producer.service'
@@ -12,8 +13,10 @@ export class KafkaExampleEventsPublisher implements ExampleEventPublisherPort {
 
   async publishCreatedEvent(event: ExampleCreatedEvent): Promise<void> {
     const message = {
+      key: event.example.id,
       value: JSON.stringify(event)
     }
+    console.log('📤 [KafkaPublisher] Publishing created event:', message)
 
     await this.kafkaProducer.emit('example.created', message)
   }

@@ -60,8 +60,6 @@ export class CreateExampleHandler
       entity.getUncommittedEvents()
     )
 
-    await this.createExamplePort.create(entity)
-
     const merged = this.publisher.mergeObjectContext(entity)
     await this.createExamplePort.create(merged)
     merged.commit()
