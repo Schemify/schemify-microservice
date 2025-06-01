@@ -12,7 +12,8 @@ RUN npm ci
 
 COPY . .
 
-RUN npm run build 
+RUN npm run build schemify-microservice
+RUN npm run build proto
 
 # -----------------------------
 # 🚀 Stage 2: Runtime
@@ -28,15 +29,17 @@ WORKDIR /app
 
 COPY --from=builder /app/package*.json ./ 
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist/apps/schemify-microservice/src ./dist/apps/schemify-microservice/src
 COPY --from=builder /app/apps/schemify-microservice/prisma ./prisma
-COPY --from=builder /app/libs/proto ./dist/apps/schemify-microservice/proto
+
+COPY --from=builder /app/dist/libs/proto/src/example ./dist/libs/proto/src/example
+
+COPY --from=builder /app/dist/apps/schemify-microservice/src ./dist/apps/schemify-microservice/src
 
 # Exponer el puerto gRPC
 EXPOSE 50051
 
 ENTRYPOINT ["sh", "-c"]
-CMD ["npx prisma generate --schema=prisma/schema.prisma && npx prisma migrate deploy --schema=prisma/schema.prisma && node dist/apps/schemify-microservice/src/main"]
+CMD ["npx prisma generate --schema=prisma/schema.prisma && npx prisma migrate deploy --schema=prisma/schema.prisma && node ./dist/apps/schemify-microservice/src/main"]
 
 # # -----------------------------
 # # 🏗 Stage 1: Builder

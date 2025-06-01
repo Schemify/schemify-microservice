@@ -17,11 +17,11 @@
 
 import { Controller } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
-import { example } from '@app/proto'
+import { example } from '@proto'
 
-import { CreateExampleCommand } from '@microservice/schemify-microservice/example/application/ports/inbounds/commands'
+import { CreateExampleCommand } from '@example//example/application/ports/inbounds/commands'
 
-import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+import { ExampleMapper } from '@example//libs/shared/mappers/example.mapper'
 import { GrpcMethod } from '@nestjs/microservices'
 
 @Controller()

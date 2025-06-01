@@ -17,14 +17,14 @@
 
 import { Controller } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { example } from '@app/proto'
+import { example } from '@proto'
 
-import { CursorResult } from '@microservice/schemify-microservice/libs/shared/interfaces/pagination/cursor-result.interface'
+import { CursorResult } from '@example//libs/shared/interfaces/pagination/cursor-result.interface'
 
-import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
+import { ExampleEntity } from '@example//example/domain/entities/example.entity'
 
-import { GetExamplesByCursorQuery } from '@microservice/schemify-microservice/example/application/ports/inbounds/queries'
-import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+import { GetExamplesByCursorQuery } from '@example//example/application/ports/inbounds/queries'
+import { ExampleMapper } from '@example//libs/shared/mappers/example.mapper'
 import { GrpcMethod } from '@nestjs/microservices'
 
 @Controller('ExampleService')

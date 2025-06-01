@@ -10,16 +10,16 @@
  * Este mapper aísla las conversiones para mantener los handlers y servicios limpios.
  */
 
-import { example } from '@app/proto'
-import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
+import { example } from '@proto'
+import { ExampleEntity } from '@example//example/domain/entities/example.entity'
 
-import { NameValueObject } from '@microservice/schemify-microservice/example/domain/value-objects/name.value-object'
-import { DescriptionValueObject } from '@microservice/schemify-microservice/example/domain/value-objects/description.value-object'
+import { NameValueObject } from '@example//example/domain/value-objects/name.value-object'
+import { DescriptionValueObject } from '@example//example/domain/value-objects/description.value-object'
 
 import {
   ExampleProps,
   ExamplePrimitives
-} from '@microservice/schemify-microservice/example/domain/interfaces/example.domain.interface'
+} from '@example//example/domain/interfaces/example.domain.interface'
 
 export class ExampleMapper {
   /**

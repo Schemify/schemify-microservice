@@ -23,11 +23,11 @@
 import { Controller } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
 
-import { example } from '@app/proto'
+import { example } from '@proto'
 
-import { GetAllExamplesQuery } from '@microservice/schemify-microservice/example/application/ports/inbounds/queries'
-import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
-import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+import { GetAllExamplesQuery } from '@example//example/application/ports/inbounds/queries'
+import { ExampleEntity } from '@example//example/domain/entities/example.entity'
+import { ExampleMapper } from '@example//libs/shared/mappers/example.mapper'
 import { GrpcMethod } from '@nestjs/microservices'
 
 @Controller()

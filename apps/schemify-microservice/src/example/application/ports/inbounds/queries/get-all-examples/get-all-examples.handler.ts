@@ -7,7 +7,7 @@
  * 🔹 Orquesta la recuperación de todos los `ExampleEntity` desde el puerto de lectura.
  *
  * ✨ Responsabilidad:
- *  - Invocar el repositorio de solo lectura (`ExampleQueryRepository`)
+ *  - Invocar el repositorio de solo lectura (`GetAllExamplesPort`)
  *  - Devolver una lista de entidades completas del dominio
  *  - No contiene lógica de presentación ni mapeos a DTOs
  *
@@ -22,20 +22,25 @@
  *  - Facilita testing, evolución y desacoplamiento
  *
  * 🔌 Dependencias:
- *  - `ExampleQueryRepository`: puerto de salida del dominio
+ *  - `GetAllExamplesPort`: puerto de salida del dominio
  */
 
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { GetAllExamplesQuery } from './get-all-examples.query'
 
-import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
-import { ExampleQueryRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-query-repository'
+import { ExampleEntity } from '@example//example/domain/entities/example.entity'
+
+import { GetAllExamplesPort } from '@example//example/application/ports/outbounds/repositories/example-query-ports'
+import { GetAllExamplesQuery } from './get-all-examples.query'
+import { Inject } from '@nestjs/common'
 
 @QueryHandler(GetAllExamplesQuery)
 export class GetAllExamplesHandler
   implements IQueryHandler<GetAllExamplesQuery>
 {
-  constructor(private readonly queryRepository: ExampleQueryRepository) {}
+  constructor(
+    @Inject(GetAllExamplesPort)
+    private readonly getAllExamplePort: GetAllExamplesPort
+  ) {}
 
   /**
    * Ejecuta la query `GetAllExamplesQuery`.
@@ -43,6 +48,6 @@ export class GetAllExamplesHandler
    * @returns Lista de entidades del dominio `ExampleEntity[]`
    */
   async execute(): Promise<ExampleEntity[]> {
-    return this.queryRepository.findAll()
+    return this.getAllExamplePort.getAll()
   }
 }

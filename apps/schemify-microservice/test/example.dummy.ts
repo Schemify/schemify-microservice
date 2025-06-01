@@ -5,7 +5,7 @@ import { INestApplication } from '@nestjs/common'
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { join } from 'path'
 
-import { EXAMPLE_PACKAGE_NAME } from '@app/proto'
+import { EXAMPLE_PACKAGE_NAME } from '@proto'
 
 describe('ExampleService (gRPC)', () => {
   let app: INestApplication

@@ -15,27 +15,33 @@
  * 1. El cliente o servicio envía `CreateExampleCommand` al `CommandBus`
  * 2. NestJS ejecuta este handler
  * 3. Se crea un nuevo `ExampleEntity` con sus reglas de dominio
- * 4. El handler invoca `commandRepository.create(...)`
+ * 4. El handler invoca `createExamplePort.create(...)`
  * 5. Se aplica el evento de creación (`entity.commit()`)
  * 6. Se retorna la entidad (puede ser transformada antes de exponerse)
  *
  * Dependencias:
- * - `ExampleCommandRepository`: capa de persistencia orientada a escritura
+ * - `CreateExamplePort`: capa de persistencia orientada a escritura
  */
 
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
+import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs'
 
 import { CreateExampleCommand } from './create-example.command'
 
-import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
+import { ExampleEntity } from '@example//example/domain/entities/example.entity'
 
-import { ExampleCommandRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-command.repository'
+import { CreateExamplePort } from '@example//example/application/ports/outbounds/repositories/example-command-ports'
+
+import { Inject } from '@nestjs/common'
 
 @CommandHandler(CreateExampleCommand)
 export class CreateExampleHandler
   implements ICommandHandler<CreateExampleCommand>
 {
-  constructor(private readonly commandRepository: ExampleCommandRepository) {}
+  constructor(
+    @Inject(CreateExamplePort)
+    private readonly createExamplePort: CreateExamplePort,
+    private readonly publisher: EventPublisher
+  ) {}
 
   /**
    * Ejecuta el comando creando un nuevo agregado en el dominio.
@@ -49,8 +55,18 @@ export class CreateExampleHandler
       description: command.description
     })
 
-    await this.commandRepository.create(entity)
-    entity.commit()
+    console.log(
+      '⚙️ [Handler] Entity created, uncommitted events:',
+      entity.getUncommittedEvents()
+    )
+
+    await this.createExamplePort.create(entity)
+
+    const merged = this.publisher.mergeObjectContext(entity)
+    await this.createExamplePort.create(merged)
+    merged.commit()
+
+    console.log('📤 [Handler] Entity committed')
 
     return entity
   }

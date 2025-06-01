@@ -14,27 +14,30 @@
  * 2. El `CommandBus` ejecuta este handler
  * 3. El handler consulta si el recurso existe
  * 4. Si no existe, lanza `NotFoundException`
- * 5. Si existe, ejecuta `commandRepository.delete(id)`
+ * 5. Si existe, ejecuta `deleteExamplePort.delete(id)`
  *
  * Dependencias:
- * - `ExampleCommandRepository`: contrato de persistencia de escritura
+ * - `DeleteExamplePort`: contrato de persistencia de escritura
  */
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { NotFoundException } from '@nestjs/common'
+import { Inject, NotFoundException } from '@nestjs/common'
 
 import { DeleteExampleCommand } from './delete-example.command'
 
-import { ExampleCommandRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-command.repository'
-import { ExampleQueryRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-query-repository'
+import { DeleteExamplePort } from '@example//example/application/ports/outbounds/repositories/example-command-ports'
+import { GetExampleByIdPort } from '@example//example/application/ports/outbounds/repositories/example-query-ports'
 
 @CommandHandler(DeleteExampleCommand)
 export class DeleteExampleHandler
   implements ICommandHandler<DeleteExampleCommand>
 {
   constructor(
-    private readonly commandRepository: ExampleCommandRepository,
-    private readonly queryRepository: ExampleQueryRepository
+    @Inject(DeleteExamplePort)
+    private readonly deleteExamplePort: DeleteExamplePort,
+
+    @Inject(GetExampleByIdPort)
+    private readonly getExampleByIdPort: GetExampleByIdPort
   ) {}
 
   /**
@@ -44,12 +47,12 @@ export class DeleteExampleHandler
    * @throws NotFoundException si el recurso no existe
    */
   async execute(command: DeleteExampleCommand): Promise<void> {
-    const entity = await this.queryRepository.findById(command.id)
+    const entity = await this.getExampleByIdPort.getById(command.id)
 
     if (!entity) {
       throw new NotFoundException(`Example with id ${command.id} not found`)
     }
 
-    await this.commandRepository.delete(command.id)
+    await this.deleteExamplePort.delete(command.id)
   }
 }

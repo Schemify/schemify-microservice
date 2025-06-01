@@ -1,3 +1,3 @@
-import { KafkaProducerService } from './kafka-producer.service'
+import { KafkaExampleEventsPublisher } from './kafka-example-events.publisher'
 
-export const KafkaProducers = [KafkaProducerService]
+export const KafkaProducers = [KafkaExampleEventsPublisher]

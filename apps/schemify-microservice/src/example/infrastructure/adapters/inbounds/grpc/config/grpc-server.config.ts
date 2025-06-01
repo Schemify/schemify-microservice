@@ -1,8 +1,8 @@
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
 import { join } from 'path'
-import { example } from '@app/proto'
+import { example } from '@proto'
 
-import { PROTO_PATHS } from '@microservice/schemify-microservice/example/infrastructure/shared/constants/proto-paths'
+import { PROTO_PATHS } from '@example//example/infrastructure/shared/constants/proto-paths'
 
 export function grpcServerOptions(): MicroserviceOptions {
   return {

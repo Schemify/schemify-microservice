@@ -70,13 +70,10 @@ export class ExampleEntity extends AggregateRoot {
       updatedAt: now
     })
 
-    entity.apply(
-      new ExampleCreatedEvent(
-        entity.id,
-        entity.props.name,
-        entity.props.description
-      )
-    )
+    entity.apply(new ExampleCreatedEvent(entity))
+
+    console.log('🧠 [Domain] Event applied:', entity.getUncommittedEvents())
+
     return entity
   }
 

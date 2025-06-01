@@ -1,30 +1,55 @@
 import { Module } from '@nestjs/common'
 import { PrismaModule } from './prisma/prisma.module'
+import { SharedModule } from '@example//libs/shared/shared.module'
+import { ExampleMapper } from '@example//libs/shared/mappers/example.mapper'
 
-// ✅ Puerto de salida (dominio)
-import { ExampleCommandRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-command.repository'
-import { ExampleQueryRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-query-repository'
+// Puertos (abstract classes)
+import {
+  CreateExamplePort,
+  UpdateExamplePort,
+  DeleteExamplePort
+} from '@example//example/application/ports/outbounds/repositories/example-command-ports'
 
-// ✅ Adaptadores de salida (infraestructura)
-import { ExampleWritePrismaRepository } from '@microservice/schemify-microservice/example/infrastructure/adapters/outbounds/repositories/prisma/write/example-write.repository'
-import { ExampleReadPrismaRepository } from '@microservice/schemify-microservice/example/infrastructure/adapters/outbounds/repositories/prisma/read/example-read.repository'
+import {
+  GetAllExamplesPort,
+  GetExampleByIdPort,
+  GetExamplesWithCursorPort
+} from '@example//example/application/ports/outbounds/repositories/example-query-ports'
 
-import { SharedModule } from '@microservice/schemify-microservice/libs/shared/shared.module'
-import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+// Adaptadores de salida (implementaciones)
+import { CreateExamplePrismaRepository } from './prisma/command/create-example.repository'
+import { UpdateExamplePrismaRepository } from './prisma/command/update-example.repository'
+import { DeleteExamplePrismaRepository } from './prisma/command/delete-example.repository'
+
+import { GetAllExamplesPrismaRepository } from './prisma/query/get-all-examples'
+import { GetExampleByIdPrismaRepository } from './prisma/query/get-example-by-id'
+import { GetExamplesWithCursorPrismaRepository } from './prisma/query/get-example-with-cursor.repository'
 
 @Module({
   imports: [PrismaModule, SharedModule],
   providers: [
     ExampleMapper,
+
+    // Command ports
+    { provide: CreateExamplePort, useClass: CreateExamplePrismaRepository },
+    { provide: UpdateExamplePort, useClass: UpdateExamplePrismaRepository },
+    { provide: DeleteExamplePort, useClass: DeleteExamplePrismaRepository },
+
+    // Query ports
+    { provide: GetExampleByIdPort, useClass: GetExampleByIdPrismaRepository },
+    { provide: GetAllExamplesPort, useClass: GetAllExamplesPrismaRepository },
     {
-      provide: ExampleCommandRepository,
-      useClass: ExampleWritePrismaRepository
-    },
-    {
-      provide: ExampleQueryRepository,
-      useClass: ExampleReadPrismaRepository
+      provide: GetExamplesWithCursorPort,
+      useClass: GetExamplesWithCursorPrismaRepository
     }
   ],
-  exports: [ExampleCommandRepository, ExampleQueryRepository]
+  exports: [
+    CreateExamplePort,
+    UpdateExamplePort,
+    DeleteExamplePort,
+    GetExampleByIdPort,
+    GetAllExamplesPort,
+    GetExamplesWithCursorPort
+  ]
 })
 export class RepositoriesModule {}

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Example {
-  id          String   @id @default(uuid())
+  id          String   @id
   name        String
   description String?
   createdAt   DateTime @default(now())

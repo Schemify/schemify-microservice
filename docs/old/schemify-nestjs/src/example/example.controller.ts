@@ -14,7 +14,7 @@ import {
   CreateExampleDto,
   UpdateExampleDto,
   ExampleServiceControllerMethods
-} from '@app/proto'
+} from '@proto'
 import { Observable } from 'rxjs'
 import { Ctx, EventPattern, KafkaContext, Payload } from '@nestjs/microservices'
 

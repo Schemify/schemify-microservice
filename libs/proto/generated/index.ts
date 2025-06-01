@@ -1,2 +1,1 @@
-export * from './services'
-// export * from './prueba'
+export * as example from './example'

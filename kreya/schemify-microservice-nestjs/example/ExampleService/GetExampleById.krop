@@ -4,7 +4,7 @@
   },
   "requests": [
     {
-      "location": "GetExampleById-request.json"
+      "location": "getExampleById-request.json"
     }
   ],
   "operationType": "unary",

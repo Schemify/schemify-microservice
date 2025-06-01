@@ -5,12 +5,15 @@ import { Logger } from '@nestjs/common'
 
 // import { join } from 'path'
 
-// import { example } from '@app/proto'
+// import { example } from '@proto'
 
 import { GrpcLoggingInterceptor } from './example/infrastructure/shared/interceptors/grpc-logging.interceptor'
 
 import { GrpcServerModule } from './example/infrastructure/adapters/inbounds/grpc/grpc-server.module'
 import { KafkaConsumerModule } from './example/infrastructure/adapters/inbounds/messaging/kafka/kafka-consumer.module'
+import { KafkaProducerService } from './example/infrastructure/adapters/outbounds/messaging/kafka/client/kafka-producer.service'
+
+import { EventBus } from '@nestjs/cqrs'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -19,48 +22,17 @@ async function bootstrap() {
 
   app.connectMicroservice(GrpcServerModule.transport())
 
-  // app.connectMicroservice<MicroserviceOptions>({
-  //   transport: Transport.GRPC,
-  //   options: {
-  //     package: example.EXAMPLE_PACKAGE_NAME,
-  //     protoPath: join(
-  //       __dirname,
-  //       '../proto/src/services/example_service/example.proto'
-  //     ),
-  //     url: '0.0.0.0:50051'
-  //   }
-  // })
-
   if (process.env.NODE_ENV === 'development') {
     app.useGlobalInterceptors(new GrpcLoggingInterceptor())
   }
-
-  // 3. Configurar Kafka (para consumir mensajes asíncronos)
-
-  // Todos los consumidores que comparten el mismo groupId cooperan para leer un mismo topic.
-  // Kafka balancea las particiones de un topic entre los miembros del grupo.
-  // Solo un miembro del grupo consume una partición a la vez.
-
-  //   brokers	Dónde vive el clúster Kafka	['localhost:9092']
-  // clientId	Identidad única del cliente	'auth-microservice'
-  // consumer.groupId	Grupo de trabajo para consumir tópicos	'auth-service-group'
 
   app.connectMicroservice(
     KafkaConsumerModule.transport({
       clientId: 'schemify-client',
       groupId: 'schemify-group',
-      brokers: [process.env.KAFKA_BROKER || 'kafka1:9092']
+      brokers: ['kafka1:9092']
     })
   )
-
-  // app.connectMicroservice<MicroserviceOptions>(
-  //   kafkaConsumerOptions('schemify-client', 'schemify-group', ['kafka1:9092'])
-  // )
-  // app.connectMicroservice(
-  //   KafkaConsumerModule.transport('schemify-client', 'schemify-group', [
-  //     process.env.KAFKA_BROKER || 'kafka1:9092'
-  //   ])
-  // )
 
   // 4. Iniciar los microservicios
   await app.startAllMicroservices()
@@ -76,6 +48,19 @@ async function bootstrap() {
   }
 
   await app.init()
+
+  const kafka = app.get(KafkaProducerService)
+
+  await kafka.emit('example.created', {
+    id: 'test-123',
+    name: 'Prueba directa',
+    description: 'Desde bootstrap main.ts'
+  })
+
+  const eventBus = app.get(EventBus)
+  eventBus.subscribe((event) => {
+    console.log('📡 EVENTO DETECTADO DESDE EL BUS:', event)
+  })
 }
 
 bootstrap().catch((err) => {

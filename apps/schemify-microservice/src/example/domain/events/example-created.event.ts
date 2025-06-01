@@ -14,13 +14,14 @@
  */
 
 import { IEvent } from '@nestjs/cqrs'
-import { NameValueObject } from '../value-objects/name.value-object'
-import { DescriptionValueObject } from '../value-objects/description.value-object'
+import { ExampleEntity } from '../entities/example.entity'
 
 export class ExampleCreatedEvent implements IEvent {
-  constructor(
-    public readonly id: string,
-    public readonly name: NameValueObject,
-    public readonly description?: DescriptionValueObject
-  ) {}
+  public readonly occurredAt: Date
+  public readonly example: ExampleEntity
+
+  constructor(example: ExampleEntity) {
+    this.occurredAt = new Date()
+    this.example = example
+  }
 }

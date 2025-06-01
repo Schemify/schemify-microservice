@@ -15,15 +15,24 @@
 import { Module } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 
-import { PortsModule } from './ports/ports.module'
+import { CommandHandlers } from './ports/inbounds/commands/'
+import { QueryHandlers } from './ports/inbounds/queries'
+import { EventHandlers } from './ports/inbounds/events'
+import { UseCasesModule } from './use-cases/use-cases.module'
 
-import { SharedModule } from '@microservice/schemify-microservice/libs/shared/shared.module'
-import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+import { SharedModule } from '@example//libs/shared/shared.module'
+import { ExampleMapper } from '@example//libs/shared/mappers/example.mapper'
+
+import { OutboundsModule } from '@example//example/infrastructure/adapters/outbounds/outbounds.module'
 
 @Module({
-  imports: [CqrsModule, PortsModule, SharedModule],
-  providers: [ExampleMapper, PortsModule],
-
-  exports: [CqrsModule, PortsModule, ExampleMapper]
+  imports: [CqrsModule, SharedModule, OutboundsModule, UseCasesModule],
+  providers: [
+    ...CommandHandlers,
+    ...QueryHandlers,
+    ...EventHandlers,
+    ExampleMapper
+  ],
+  exports: [CqrsModule]
 })
 export class ApplicationModule {}

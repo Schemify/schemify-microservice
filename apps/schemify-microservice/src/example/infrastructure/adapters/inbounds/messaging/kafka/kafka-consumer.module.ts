@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { KafkaConsumers } from './consumers'
 import { KafkaOptions, Transport } from '@nestjs/microservices'
-import { ApplicationModule } from '@microservice/schemify-microservice/example/application/application.module'
+import { ApplicationModule } from '@example//example/application/application.module'
 
 @Module({
   imports: [ApplicationModule],

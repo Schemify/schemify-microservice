@@ -17,10 +17,10 @@
 import { Controller } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 
-import { example } from '@app/proto'
+import { example } from '@proto'
 
-import { UpdateExampleCommand } from '@microservice/schemify-microservice/example/application/ports/inbounds/commands'
-import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+import { UpdateExampleCommand } from '@example//example/application/ports/inbounds/commands'
+import { ExampleMapper } from '@example//libs/shared/mappers/example.mapper'
 import { GrpcMethod } from '@nestjs/microservices'
 
 @Controller()
@@ -56,7 +56,11 @@ export class UpdateExampleGrpcController {
   async updateExample(
     request: example.UpdateExampleDto
   ): Promise<example.Example> {
-    const props = this.mapper.protoToProps(request.example!)
+    if (!request.example) {
+      throw new Error('Falta el objeto example en el payload')
+    }
+
+    const props = this.mapper.protoToProps(request.example)
 
     const command = new UpdateExampleCommand(
       request.id,

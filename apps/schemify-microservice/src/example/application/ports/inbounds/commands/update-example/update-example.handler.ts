@@ -21,26 +21,28 @@
  * 7. Ejecuta `entity.commit()` para publicar los eventos
  *
  * Dependencias:
- * - `ExampleQueryRepository`: para verificar existencia (solo lectura)
- * - `ExampleCommandRepository`: para persistir el resultado modificado
+ * - `GetExampleByIdPort`: para verificar existencia (solo lectura)
+ * - `UpdateExamplePort`: para persistir el resultado modificado
  */
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { NotFoundException } from '@nestjs/common'
+import { Inject, NotFoundException } from '@nestjs/common'
 
 import { UpdateExampleCommand } from './update-example.command'
 
-import { ExampleEntity } from '@microservice/schemify-microservice/example/domain/entities/example.entity'
+import { ExampleEntity } from '@example//example/domain/entities/example.entity'
 
-import { ExampleQueryRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-query-repository'
-import { ExampleCommandRepository } from '@microservice/schemify-microservice/example/domain/ports/outbounds/example-command.repository'
+import { GetExampleByIdPort } from '@example//example/application/ports/outbounds/repositories/example-query-ports'
+import { UpdateExamplePort } from '@example//example/application/ports/outbounds/repositories/example-command-ports'
 @CommandHandler(UpdateExampleCommand)
 export class UpdateExampleHandler
   implements ICommandHandler<UpdateExampleCommand>
 {
   constructor(
-    private readonly queryRepository: ExampleQueryRepository,
-    private readonly commandRepository: ExampleCommandRepository
+    @Inject(GetExampleByIdPort)
+    private readonly getExampleByIdPort: GetExampleByIdPort,
+    @Inject(UpdateExamplePort)
+    private readonly updateExamplePort: UpdateExamplePort
   ) {}
 
   /**
@@ -51,7 +53,7 @@ export class UpdateExampleHandler
    * @throws NotFoundException si el recurso no existe
    */
   async execute(command: UpdateExampleCommand): Promise<ExampleEntity> {
-    const example = await this.queryRepository.findById(command.id)
+    const example = await this.getExampleByIdPort.getById(command.id)
 
     if (!example) {
       throw new NotFoundException(`Example with id ${command.id} not found`)
@@ -63,7 +65,7 @@ export class UpdateExampleHandler
       description: command.description
     })
 
-    await this.commandRepository.update(example)
+    await this.updateExamplePort.update(example)
     example.commit()
 
     return example

@@ -16,9 +16,9 @@
 
 import { Controller } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
-import { example } from '@app/proto'
+import { example } from '@proto'
 
-import { DeleteExampleCommand } from '@microservice/schemify-microservice/example/application/ports/inbounds/commands'
+import { DeleteExampleCommand } from '@example//example/application/ports/inbounds/commands'
 import { GrpcMethod } from '@nestjs/microservices'
 
 @Controller()

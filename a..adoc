@@ -1,0 +1,88 @@
+\= SPEC-001: Framework para Microservicios Basado en NestJS
+\:sectnums:
+\:toc:
+
+\== Background
+
+Este diseño nace a partir del desarrollo de un microservicio real de ejemplo ("schemify-microservice") desarrollado con NestJS. El objetivo del proyecto es consolidar una arquitectura hexagonal y limpia que pueda ser usada como base para un framework extensible orientado a microservicios.
+
+La idea surge al identificar patrones repetitivos y prácticas comunes en la integración de capas como dominio, aplicación, infraestructura y transporte (gRPC, Kafka), y propone abstraerlos en un modelo reutilizable para proyectos empresariales.
+
+\== Requirements
+
+*Must Have*
+
+* Crear una base de microservicios altamente reutilizable.
+* Utilizar arquitectura hexagonal (puertos y adaptadores).
+* Organizar la capa de dominio según Domain-Driven Design (DDD).
+* Aplicar el patrón CQRS para comandos, queries y eventos.
+* Usar gRPC como protocolo de comunicación entre microservicios.
+* Permitir automatización para scaffolding de microservicios y sus componentes.
+
+*Should Have*
+
+* Mantener el diseño desacoplado y agnóstico del ORM (inicia con Prisma).
+* Permitir en el futuro soportar otros protocolos (ej. REST) y ORMs.
+* Facilitar migración desde monolitos a microservicios para equipos grandes.
+
+*Could Have*
+
+* Proveer documentación en línea tipo playground para ejemplos.
+* Herramientas gráficas para facilitar configuración e inicio de servicios.
+
+*Won’t Have (por ahora)*
+
+* No se implementará un API Gateway, aunque la arquitectura lo considera futuro.
+* No se utilizarán controladores HTTP por el momento.
+
+\== Method
+
+Pendiente...
+
+\== Implementation
+
+El setup inicial se realiza clonando el repositorio base. Se espera que el equipo trabaje respetando las convenciones de carpetas y módulos definidos.
+
+El enfoque incluye una CLI compuesta de scripts modulares para automatizar tareas repetitivas del desarrollo:
+
+* Generadores de command/query/event handler.
+* Generadores de controller gRPC.
+* Generadores de repository y entity.
+* Scripts CLI para scaffolding de nuevas capas y microservicios.
+
+La estructura está preparada para crecer horizontalmente a nuevos microservicios sin comprometer la cohesión del dominio.
+
+\== Milestones
+
+1. **Estructura Base y Setup Inicial**
+
+   * Estructura de carpetas establecida.
+   * Módulos iniciales (dominio, aplicación, infraestructura, main).
+
+2. **Módulos de Transporte**
+
+   * gRPC controllers conectados a puertos de aplicación.
+   * Kafka consumers conectados a handlers de eventos.
+
+3. **CLI de Scaffolding**
+
+   * Script para crear nuevos microservicios.
+   * Script para generar command/query/event handler.
+   * Script para generar controller y repository.
+
+4. **Refactor y Generalización**
+
+   * Consolidar utilidades en librerías compartidas.
+   * Validar agnosticismo de ORM y protocolo.
+
+5. **Documentación y Demo**
+
+   * Documentar estructura de código.
+   * Crear ejemplos demostrativos con gRPC y Kafka.
+
+\== Gathering Results
+
+* Evaluación del cumplimiento de requerimientos funcionales y de arquitectura.
+* Revisión del nivel de desacoplamiento y testabilidad alcanzado.
+* Verificación del rendimiento y extensibilidad con nuevos módulos.
+* Feedback de desarrolladores integrando nuevos servicios usando el framework.

@@ -147,7 +147,7 @@ import { AppModule } from './app.module'
 import { Logger } from '@nestjs/common'
 
 // ! Actualizar el nombre del paquete
-import { EXAMPLE_PACKAGE_NAME } from '@app/proto'
+import { EXAMPLE_PACKAGE_NAME } from '@proto'
 import { join } from 'path'
 
 import { GrpcLoggingInterceptor } from './$NAME/infrastructure/interceptors/grpc-logging.interceptor'
@@ -583,7 +583,7 @@ import {
   ${CLASS_NAME}ServiceControllerMethods,
   ${CLASS_NAME},
   ${CLASS_NAME}s
-} from '@app/proto'
+} from '@proto'
 
 import { ${CLASS_NAME}ApplicationService } from '../../application/services/${NAME}-application.service'
 import { ${CLASS_NAME}Mapper } from '../../application/mappers/${NAME}.mapper'
@@ -772,7 +772,7 @@ import { Injectable, Inject, OnModuleInit } from '@nestjs/common'
 import { ClientKafka } from '@nestjs/microservices'
 import { lastValueFrom } from 'rxjs'
 
-// import { ${CLASS_NAME} } from '@app/proto'
+// import { ${CLASS_NAME} } from '@proto'
 import { ${CLASS_NAME}CreatedEvent } from '../../../../domain/events/${NAME}-created.event'
 import { DescriptionValueObject } from '../../../../domain/value-objects/description.value-object'
 

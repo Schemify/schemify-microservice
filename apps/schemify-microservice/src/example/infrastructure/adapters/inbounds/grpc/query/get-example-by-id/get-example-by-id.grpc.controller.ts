@@ -16,10 +16,10 @@
 
 import { Controller } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { example } from '@app/proto'
+import { example } from '@proto'
 
-import { GetExampleByIdQuery } from '@microservice/schemify-microservice/example/application/ports/inbounds/queries'
-import { ExampleMapper } from '@microservice/schemify-microservice/libs/shared/mappers/example.mapper'
+import { GetExampleByIdQuery } from '@example//example/application/ports/inbounds/queries'
+import { ExampleMapper } from '@example//libs/shared/mappers/example.mapper'
 import { GrpcMethod } from '@nestjs/microservices'
 
 @Controller('ExampleService')
