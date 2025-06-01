@@ -27,9 +27,9 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { GetExampleByIdQuery } from './get-example-by-id.query'
 
-import { ExampleEntity } from '@example//example/domain/entities/example.entity'
+import { ExampleEntity } from '@example/example/domain/entities/example.entity'
 
-import { GetExampleByIdPort } from '@example//example/application/ports/outbounds/repositories/example-query-ports'
+import { GetExampleByIdPort } from '@example/example/application/ports/outbounds/repositories/example-query-ports'
 import { Inject } from '@nestjs/common'
 
 @QueryHandler(GetExampleByIdQuery)

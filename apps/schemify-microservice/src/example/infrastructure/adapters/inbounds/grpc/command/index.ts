@@ -26,9 +26,9 @@
  */
 
 // 🧩 Controladores individuales (por comando)
-import { CreateExampleGrpcController } from './create-example/create-example.grpc.controller'
-import { UpdateExampleGrpcController } from './update-example/update-example.grpc.controller'
-import { DeleteExampleGrpcController } from './delete-example/delete-example.grpc.controller'
+import { CreateExampleGrpcController } from './create-example.grpc.controller'
+import { UpdateExampleGrpcController } from './update-example.grpc.controller'
+import { DeleteExampleGrpcController } from './delete-example.grpc.controller'
 
 /**
  * 📦 Conjunto de controladores gRPC de escritura para CQRS Commands
@@ -40,6 +40,6 @@ export const GrpcCommandControllers = [
 ]
 
 // 📤 Exportación individual si se necesita
-export * from './create-example/create-example.grpc.controller'
-export * from './update-example/update-example.grpc.controller'
-export * from './delete-example/delete-example.grpc.controller'
+export * from './create-example.grpc.controller'
+export * from './update-example.grpc.controller'
+export * from './delete-example.grpc.controller'

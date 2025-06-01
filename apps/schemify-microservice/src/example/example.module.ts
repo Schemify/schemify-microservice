@@ -15,7 +15,7 @@ import { Module } from '@nestjs/common'
 import { InfrastructureModule } from './infrastructure/infrastructure.module'
 import { ApplicationModule } from './application/application.module'
 
-import { SharedModule } from '@example//libs/shared/shared.module'
+import { SharedModule } from '@example/libs/shared/shared.module'
 
 @Module({
   imports: [InfrastructureModule, ApplicationModule, SharedModule],

@@ -8,7 +8,8 @@
       "createMissingOperations": true,
       "options": {
         "files": [
-          "../../libs/proto/services"
+          "../../libs/proto/src/example",
+          "../../libs/proto/src/prueba"
         ],
         "importPaths": [],
         "excludedFiles": []

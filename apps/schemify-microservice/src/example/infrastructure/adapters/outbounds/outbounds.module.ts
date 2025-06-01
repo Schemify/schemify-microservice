@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common'
-import { MessagingModule } from './messaging/messaging.module'
-import { RepositoriesModule } from './repositories/repositories.module'
+
+import { KafkaProducerModule } from './kafka/kafka-producer.module'
+import { PrismaModule } from './prisma/prisma.module'
 
 @Module({
-  imports: [MessagingModule, RepositoriesModule],
-  exports: [MessagingModule, RepositoriesModule]
+  imports: [KafkaProducerModule, PrismaModule],
+  exports: [KafkaProducerModule, PrismaModule]
 })
 export class OutboundsModule {}

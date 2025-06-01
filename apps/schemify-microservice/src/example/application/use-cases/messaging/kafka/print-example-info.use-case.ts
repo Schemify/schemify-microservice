@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
-import { ExampleCreatedEvent } from '@example//example/domain/events/example-created.event'
-import { ExampleEventPublisherPort } from '@example//example/application/ports/outbounds/messaging/example-event-publisher.port'
+import { ExampleCreatedEvent } from '@example/example/domain/events/example-created.event'
+import { ExampleEventPublisherPort } from '@example/example/application/ports/outbounds/messaging/example-event-publisher.port'
 
 @Injectable()
 export class PrintExampleInfoUseCase {

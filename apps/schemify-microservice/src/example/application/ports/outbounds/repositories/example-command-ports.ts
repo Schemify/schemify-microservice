@@ -1,4 +1,4 @@
-import { ExampleEntity } from '@example//example/domain/entities/example.entity'
+import { ExampleEntity } from '@example/example/domain/entities/example.entity'
 
 /**
  * 🔹 Puerto de salida para creación de ExampleEntity

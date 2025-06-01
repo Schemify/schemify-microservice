@@ -27,9 +27,9 @@
 
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 
-import { ExampleEntity } from '@example//example/domain/entities/example.entity'
+import { ExampleEntity } from '@example/example/domain/entities/example.entity'
 
-import { GetAllExamplesPort } from '@example//example/application/ports/outbounds/repositories/example-query-ports'
+import { GetAllExamplesPort } from '@example/example/application/ports/outbounds/repositories/example-query-ports'
 import { GetAllExamplesQuery } from './get-all-examples.query'
 import { Inject } from '@nestjs/common'
 

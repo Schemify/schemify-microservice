@@ -1,5 +1,5 @@
 {
-  "id": "{{ faker.random.uuid }}",
+  "id": "f2f8b589-ce5b-4e31-91bd-aeabc2b093fe",
   "example": {
     "name": "{{ faker.name.last_name }}",
     "description": "Global"

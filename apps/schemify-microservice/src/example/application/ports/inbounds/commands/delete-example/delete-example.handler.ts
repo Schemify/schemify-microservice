@@ -25,8 +25,8 @@ import { Inject, NotFoundException } from '@nestjs/common'
 
 import { DeleteExampleCommand } from './delete-example.command'
 
-import { DeleteExamplePort } from '@example//example/application/ports/outbounds/repositories/example-command-ports'
-import { GetExampleByIdPort } from '@example//example/application/ports/outbounds/repositories/example-query-ports'
+import { DeleteExamplePort } from '@example/example/application/ports/outbounds/repositories/example-command-ports'
+import { GetExampleByIdPort } from '@example/example/application/ports/outbounds/repositories/example-query-ports'
 
 @CommandHandler(DeleteExampleCommand)
 export class DeleteExampleHandler

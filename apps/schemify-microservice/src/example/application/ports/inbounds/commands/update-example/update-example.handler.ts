@@ -30,10 +30,10 @@ import { Inject, NotFoundException } from '@nestjs/common'
 
 import { UpdateExampleCommand } from './update-example.command'
 
-import { ExampleEntity } from '@example//example/domain/entities/example.entity'
+import { ExampleEntity } from '@example/example/domain/entities/example.entity'
 
-import { GetExampleByIdPort } from '@example//example/application/ports/outbounds/repositories/example-query-ports'
-import { UpdateExamplePort } from '@example//example/application/ports/outbounds/repositories/example-command-ports'
+import { GetExampleByIdPort } from '@example/example/application/ports/outbounds/repositories/example-query-ports'
+import { UpdateExamplePort } from '@example/example/application/ports/outbounds/repositories/example-command-ports'
 @CommandHandler(UpdateExampleCommand)
 export class UpdateExampleHandler
   implements ICommandHandler<UpdateExampleCommand>

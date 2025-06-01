@@ -27,9 +27,9 @@ import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs'
 
 import { CreateExampleCommand } from './create-example.command'
 
-import { ExampleEntity } from '@example//example/domain/entities/example.entity'
+import { ExampleEntity } from '@example/example/domain/entities/example.entity'
 
-import { CreateExamplePort } from '@example//example/application/ports/outbounds/repositories/example-command-ports'
+import { CreateExamplePort } from '@example/example/application/ports/outbounds/repositories/example-command-ports'
 
 import { Inject } from '@nestjs/common'
 

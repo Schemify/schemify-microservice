@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 
 import { GrpcServerModule } from './grpc/grpc-server.module'
-import { MessagingInboundsModule } from './messaging/messaging.module'
+import { KafkaConsumerModule } from './kafka/kafka-consumer.module'
 
 @Module({
-  imports: [MessagingInboundsModule, GrpcServerModule]
+  imports: [GrpcServerModule, KafkaConsumerModule]
 })
 export class InboundsModule {}

@@ -25,9 +25,9 @@
  */
 
 // 🧩 Controladores individuales (por caso de uso)
-import { GetAllExamplesGrpcController } from './get-all-examples/get-all-examples.grpc.controller'
-import { GetExampleByIdGrpcController } from './get-example-by-id/get-example-by-id.grpc.controller'
-import { GetExamplesByCursorGrpcController } from './get-examples-by-cursor/get-examples-by-cursor.grpc.controller'
+import { GetAllExamplesGrpcController } from './get-all-examples.grpc.controller'
+import { GetExampleByIdGrpcController } from './get-example-by-id.grpc.controller'
+import { GetExamplesByCursorGrpcController } from './get-examples-by-cursor.grpc.controller'
 
 /**
  * 📦 Array de controladores gRPC para Queries (Lectura)
@@ -39,6 +39,6 @@ export const GrpcQueryControllers = [
 ]
 
 // 📤 Exportación individual si se necesita
-export * from './get-all-examples/get-all-examples.grpc.controller'
-export * from './get-example-by-id/get-example-by-id.grpc.controller'
-export * from './get-examples-by-cursor/get-examples-by-cursor.grpc.controller'
+export * from './get-all-examples.grpc.controller'
+export * from './get-example-by-id.grpc.controller'
+export * from './get-examples-by-cursor.grpc.controller'

@@ -20,10 +20,10 @@ import { QueryHandlers } from './ports/inbounds/queries'
 import { EventHandlers } from './ports/inbounds/events'
 import { UseCasesModule } from './use-cases/use-cases.module'
 
-import { SharedModule } from '@example//libs/shared/shared.module'
-import { ExampleMapper } from '@example//libs/shared/mappers/example.mapper'
+import { SharedModule } from '@example/libs/shared/shared.module'
+import { ExampleMapper } from '@example/example/infrastructure/mappers/example.mapper'
 
-import { OutboundsModule } from '@example//example/infrastructure/adapters/outbounds/outbounds.module'
+import { OutboundsModule } from '@example/example/infrastructure/adapters/outbounds/outbounds.module'
 
 @Module({
   imports: [CqrsModule, SharedModule, OutboundsModule, UseCasesModule],

@@ -1,7 +1,7 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs'
 
-import { ExampleCreatedEvent } from '@example//example/domain/events/example-created.event'
-import { PrintExampleInfoUseCase } from '@example//example/application/use-cases/messaging/kafka/print-example-info.use-case'
+import { ExampleCreatedEvent } from '@example/example/domain/events/example-created.event'
+import { PrintExampleInfoUseCase } from '@example/example/application/use-cases/messaging/kafka/print-example-info.use-case'
 
 @EventsHandler(ExampleCreatedEvent)
 export class ExampleCreatedEventHandler
