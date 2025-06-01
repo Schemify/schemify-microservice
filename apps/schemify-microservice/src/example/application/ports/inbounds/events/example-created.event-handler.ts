@@ -7,13 +7,9 @@ import { PrintExampleInfoUseCase } from '@example//example/application/use-cases
 export class ExampleCreatedEventHandler
   implements IEventHandler<ExampleCreatedEvent>
 {
-  constructor(private readonly useCase: PrintExampleInfoUseCase) {
-    console.log('🧩 [EventHandler] Handler constructed')
-  }
+  constructor(private readonly useCase: PrintExampleInfoUseCase) {}
 
   async handle(event: ExampleCreatedEvent): Promise<void> {
-    console.log('📡 [EventHandler] Handling event:', event)
-
     await this.useCase.execute(event)
   }
 }

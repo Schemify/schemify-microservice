@@ -13,7 +13,6 @@ export class PrintExampleInfoUseCase {
    * @param event Evento de creación de ejemplo
    */
   async execute(event: ExampleCreatedEvent): Promise<void> {
-    console.log('🪐 [UseCase] PrintExampleInfoUseCase executing with:', event)
     await this.publisher.publishCreatedEvent(event)
   }
 }

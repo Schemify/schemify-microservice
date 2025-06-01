@@ -7,17 +7,21 @@ import { ExampleEventPublisherPort } from '@example//example/application/ports/o
 
 import { ExampleCreatedEvent } from '@example//example/domain/events/example-created.event'
 
+import { Envelope } from '@example/libs/shared/events/event-envelope'
+
 @Injectable()
 export class KafkaExampleEventsPublisher implements ExampleEventPublisherPort {
   constructor(private readonly kafkaProducer: KafkaProducerService) {}
 
-  async publishCreatedEvent(event: ExampleCreatedEvent): Promise<void> {
-    const message = {
-      key: event.example.id,
-      value: JSON.stringify(event)
+  async publishCreatedEvent(evt: ExampleCreatedEvent) {
+    const message: Envelope<ExampleCreatedEvent> = {
+      type: 'ExampleCreated',
+      version: 1,
+      payload: evt
     }
-    console.log('📤 [KafkaPublisher] Publishing created event:', message)
-
-    await this.kafkaProducer.emit('example.created', message)
+    await this.kafkaProducer.emit('example.created', {
+      key: evt.example.id,
+      value: JSON.stringify(message)
+    })
   }
 }

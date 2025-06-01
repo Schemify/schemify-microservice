@@ -5,7 +5,7 @@ import { ApplicationModule } from '@example//example/application/application.mod
 
 @Module({
   imports: [ApplicationModule],
-  providers: [...KafkaConsumers]
+  controllers: [...KafkaConsumers]
 })
 export class KafkaConsumerModule {
   static transport(config: {
@@ -15,6 +15,7 @@ export class KafkaConsumerModule {
   }): KafkaOptions {
     return {
       transport: Transport.KAFKA,
+
       options: {
         client: {
           clientId: config.clientId,
@@ -35,7 +36,7 @@ export class KafkaConsumerModule {
           fromBeginning: true
         },
         run: {
-          autoCommit: false,
+          autoCommit: true,
           partitionsConsumedConcurrently: 3
         }
       }

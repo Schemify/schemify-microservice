@@ -55,16 +55,9 @@ export class CreateExampleHandler
       description: command.description
     })
 
-    console.log(
-      '⚙️ [Handler] Entity created, uncommitted events:',
-      entity.getUncommittedEvents()
-    )
-
     const merged = this.publisher.mergeObjectContext(entity)
     await this.createExamplePort.create(merged)
     merged.commit()
-
-    console.log('📤 [Handler] Entity committed')
 
     return entity
   }

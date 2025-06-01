@@ -72,8 +72,6 @@ export class ExampleEntity extends AggregateRoot {
 
     entity.apply(new ExampleCreatedEvent(entity))
 
-    console.log('🧠 [Domain] Event applied:', entity.getUncommittedEvents())
-
     return entity
   }
 
