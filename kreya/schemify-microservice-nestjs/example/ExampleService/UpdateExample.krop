@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "example.ExampleService.UpdateExample"
+    "methodFqn": "example.ExampleService.updateExample"
   },
   "requests": [
     {
-      "location": "UpdateExample-request.json"
+      "location": "updateExample-request.json"
     }
   ],
   "operationType": "unary",

@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "example.ExampleService.CreateExample"
+    "methodFqn": "example.ExampleService.createExample"
   },
   "requests": [
     {
-      "location": "CreateExample-request.json"
+      "location": "createExample-request.json"
     }
   ],
   "operationType": "unary",

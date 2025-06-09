@@ -1,0 +1,121 @@
+// * Generación automática con ts-proto y soporte NestJS
+// * Ejecuta: 
+// * npx protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=./ --ts_proto_opt=nestJs=true ./libs/proto/src/services/example_service/example.proto
+
+syntax = "proto3";
+
+package example;
+
+//
+// ================================
+//   📦 Servicio ExampleService
+// ================================
+//
+// Contratos de comunicación entre el cliente y el servidor
+// para la gestión de ejemplos en la aplicación.
+//
+service ExampleService {
+  // * Crear un nuevo ejemplo
+  rpc createExample(CreateExampleDto) returns (Example) {}
+
+  // * Obtener todos los ejemplos (no paginado)
+  rpc getAllExamples(ExampleEmpty) returns (Examples) {}
+
+  // * Obtener un ejemplo por ID
+  rpc getExampleById(GetExampleByIdDto) returns (Example) {}
+
+  // * Actualizar un ejemplo existente
+  rpc updateExample(UpdateExampleDto) returns (Example) {}
+
+  // * Eliminar un ejemplo por ID
+  rpc deleteExample(GetExampleByIdDto) returns (ExampleEmpty) {}
+
+  // * Obtener ejemplos paginados (clásico page + limit)
+//   rpc getPaginatedExamples(PaginationRequest) returns (PaginatedExamples) {}
+
+  // * Soporte para scroll infinito (cursor-based pagination)
+  rpc getExamplesByCursor(CursorPaginationRequest) returns (CursorPaginatedExamples) {}
+}
+
+//
+// ================================
+//   📥 Mensajes de entrada
+// ================================
+//
+
+// ! Mensaje vacío (común en operaciones sin payload)
+message ExampleEmpty {}
+
+// * Crear nuevo ejemplo
+message CreateExampleDto {
+  string name = 1;
+  optional string description = 2;
+}
+
+// * Actualizar un ejemplo
+message UpdateExampleDto {
+  string id = 1;
+  UpdateExampleData example = 2;
+}
+
+// * Obtener un ejemplo por su ID
+message GetExampleByIdDto {
+  string id = 1;
+}
+
+// * Solicitud de paginación clásica
+// message PaginationRequest {
+//   int32 page = 1;  // Página actual (empieza en 1)
+//   int32 limit = 2; // Elementos por página
+// }
+
+// * Solicitud de paginación por cursor (scroll infinito)
+message CursorPaginationRequest {
+  string afterId = 1; // ID del último elemento visto
+  int32 limit = 2;    // Elementos siguientes a devolver
+}
+
+//
+// ================================
+//   📤 Mensajes de salida
+// ================================
+//
+
+// * Lista de múltiples ejemplos (no paginada)
+message Examples {
+  repeated Example examples = 1;
+}
+
+// * Lista de ejemplos paginada con `page`/`limit`
+message PaginatedExamples {
+  repeated Example examples = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+// * Lista de ejemplos paginada con `cursor`
+message CursorPaginatedExamples {
+  repeated Example examples = 1;
+  string nextCursor = 2;
+  bool hasMore = 3;
+}
+
+//
+// ================================
+//   🧱 Modelo base: Example
+// ================================
+//
+
+// * Representación base de un ejemplo
+message Example {
+  string id = 1;            // ! ID único del ejemplo
+  string name = 2;
+  optional string description = 3;
+}
+
+// * Datos anidados para actualizar un ejemplo
+message UpdateExampleData {
+  string name = 1;
+  optional string description = 2;
+}

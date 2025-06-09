@@ -18,8 +18,18 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@app/proto": ["libs/proto/generated"],
-      "@app/proto/*": ["libs/proto/generated/*"]
+      "@example/*": [
+        "apps/schemify-microservice/src/*"
+      ],
+      "@observability/observability": [
+        "libs/observability/src"
+      ],
+      "@observability/observability/*": [
+        "libs/observability/src/*"
+      ],
+      "@proto": [
+        "libs/proto/generated/index.ts"
+      ]
     },
     "resolveJsonModule": true,
     "esModuleInterop": true

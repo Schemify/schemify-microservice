@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "example.ExampleService.GetExampleById"
+    "methodFqn": "example.ExampleService.getExampleById"
   },
   "requests": [
     {
-      "location": "GetExampleById-request.json"
+      "location": "getExampleById-request.json"
     }
   ],
   "operationType": "unary",

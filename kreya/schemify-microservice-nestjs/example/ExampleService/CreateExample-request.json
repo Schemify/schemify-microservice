@@ -1,4 +1,4 @@
 {
   "name": "{{ faker.name.last_name }}",
-  "description": "capacitor"
+  "description": "parallelism Metal"
 }
