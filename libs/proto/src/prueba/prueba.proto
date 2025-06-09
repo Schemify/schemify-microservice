@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package prueba;
+
+// ───── Servicio CRUD ────────────────────────────────────────────
+service PruebaService {
+  rpc CreatePrueba(CreatePruebaDto) returns (Prueba) {}
+  rpc GetAllPruebas(PruebaEmpty) returns (Pruebas) {}
+  rpc GetPruebaById(GetByIdDto) returns (Prueba) {}
+  rpc UpdatePrueba(UpdatePruebaDto) returns (Prueba) {}
+  rpc DeletePrueba(GetByIdDto) returns (PruebaEmpty) {}
+
+  // opcional: paginación
+  // rpc QueryPruebas(PaginationDto) returns (Pruebas) {}
+}
+
+// ───── DTOs y Mensajes ─────────────────────────────────────────
+
+message PruebaEmpty {}
+
+message GetByIdDto {
+  string id = 1;
+}
+
+message CreatePruebaDto {
+  string name = 1;
+  optional string description = 2;
+  // agregar más campos si es necesario
+}
+
+message UpdatePruebaDto {
+  string id = 1;
+  UpdatePruebaData data = 2;
+}
+
+message UpdatePruebaData {
+  string name = 1;
+  optional string description = 2;
+  // más campos opcionales
+}
+
+message Prueba {
+  string id = 1;
+  string name = 2;
+  optional string description = 3;
+  // campos adicionales si aplica
+}
+
+message Pruebas {
+  repeated Prueba items = 1;
+}

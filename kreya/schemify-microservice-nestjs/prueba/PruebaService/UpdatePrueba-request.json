@@ -1,0 +1,7 @@
+{
+  "id": "{{ faker.random.uuid }}",
+  "data": {
+    "name": "{{ faker.name.last_name }}",
+    "description": "Rustic Soft Salad Nuevo Sol support"
+  }
+}

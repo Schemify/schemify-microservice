@@ -1,0 +1,16 @@
+FROM node:23-alpine
+
+WORKDIR /app
+
+COPY ../../package*.json ./
+RUN npm install
+
+COPY ../../ .
+
+
+COPY apps/schemify-microservice/scripts/start.sh /app/scripts/start.sh
+RUN chmod +x /app/scripts/start.sh
+
+EXPOSE 50051
+
+CMD ["sh", "/app/scripts/start.sh"]

@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "example.ExampleService.DeleteExample"
+    "methodFqn": "example.ExampleService.deleteExample"
   },
   "requests": [
     {
-      "location": "DeleteExample-request.json"
+      "location": "deleteExample-request.json"
     }
   ],
   "operationType": "unary",

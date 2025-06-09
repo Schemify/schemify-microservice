@@ -1,0 +1,43 @@
+services:
+  schemify-microservice:
+    build:
+      context: ../../
+      dockerfile: apps/schemify-microservice/Dockerfile
+    container_name: schemify-microservice-prod
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${SERVICE_PORT}
+      - APP_NAME=${SERVICE_APP_NAME}
+      - GRPC_URL=${SERVICE_GRPC_URL}
+      - GRPC_PROTO_PATH=${SERVICE_GRPC_PROTO_PATH}
+      - DATABASE_URL=${DATABASE_URL}
+    ports:
+      - '50051:50051'
+    depends_on:
+      - postgres
+    restart: always
+    networks:
+      - schemify-internal-net
+      - kafka-shared-net
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres-prod
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-prod-data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - schemify-internal-net
+
+volumes:
+  postgres-prod-data:
+
+networks:
+  schemify-internal-net:
+    driver: bridge
+  kafka-shared-net:
+    external: true
