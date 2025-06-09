@@ -24,7 +24,7 @@ export class GrpcServerModule {
       options: {
         package: example.EXAMPLE_PACKAGE_NAME,
         protoPath: PROTO_PATHS.example,
-        url: '0.0.0.0:50051'
+        url: process.env.SERVICE_GRPC_URL
       }
     }
   }

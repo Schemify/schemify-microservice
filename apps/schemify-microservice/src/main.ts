@@ -26,7 +26,9 @@ async function bootstrap() {
   }
 
   await app.startAllMicroservices()
-  logger.log('✅ Microservicio gRPC listo en puerto 50051')
+  logger.log(
+    `✅ Microservicio gRPC listo en puerto ${process.env.SERVICE_GRPC_URL}`
+  )
 
   if (process.env.NODE_ENV === 'development') {
     app.useGlobalInterceptors(new GrpcLoggingInterceptor())

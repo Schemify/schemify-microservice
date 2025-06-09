@@ -7,6 +7,7 @@ ENV HUSKY=0
 WORKDIR /app
 
 COPY package*.json ./
+COPY scripts/ ./scripts/
 
 RUN npm ci
 

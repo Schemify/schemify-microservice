@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
@@ -10,15 +9,13 @@
   "monorepo": true,
   "root": "apps/schemify-microservice",
   "projects": {
-    "schemify-microservice": {
-      "type": "application",
-      "root": "apps/schemify-microservice",
-      "entryFile": "src/main",
-      "sourceRoot": "./",
+    "observability": {
+      "type": "library",
+      "root": "libs/observability",
+      "entryFile": "index",
+      "sourceRoot": "libs/observability/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/schemify-microservice/tsconfig.app.json",
-        "assets": ["libs/proto/src/*.proto"],
-        "watchAssets": true
+        "tsConfigPath": "libs/observability/tsconfig.lib.json"
       }
     },
     "proto": {
@@ -28,7 +25,22 @@
       "compilerOptions": {
         "tsConfigPath": "libs/proto/tsconfig.lib.json",
         "webpack": false,
-        "assets": ["src/**/*.proto"],
+        "assets": [
+          "src/**/*.proto"
+        ],
+        "watchAssets": true
+      }
+    },
+    "schemify-microservice": {
+      "type": "application",
+      "root": "apps/schemify-microservice",
+      "entryFile": "src/main",
+      "sourceRoot": "./",
+      "compilerOptions": {
+        "tsConfigPath": "apps/schemify-microservice/tsconfig.app.json",
+        "assets": [
+          "libs/proto/src/*.proto"
+        ],
         "watchAssets": true
       }
     }
